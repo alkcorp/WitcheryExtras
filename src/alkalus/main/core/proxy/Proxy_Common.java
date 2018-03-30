@@ -10,7 +10,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.recipe.CustomRecipes;
 import alkalus.main.core.recipe.WitcheryRecipe;
 import alkalus.main.core.types.*;
@@ -22,7 +21,7 @@ public class Proxy_Common {
 	}
 
 	public void init(final FMLInitializationEvent e) {	
-		WitcheryExtras.setMinitevents(new CustomRecipes());
+		new CustomRecipes();
 	}	
 
 	public synchronized void postInit(final FMLPostInitializationEvent e) {	

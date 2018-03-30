@@ -243,7 +243,7 @@ public class WitcheryRecipe {
 		final int sizeNew = predictionsNew.size();		
 		try {
 			if (sizeNew < sizeOld) {
-				ReflectionUtils.setFinal(RiteRegistry.instance(), "predictions", predictionsNew);
+				ReflectionUtils.setFinal(PredictionManager.instance(), "predictions", predictionsNew);
 				return true;				
 			}			
 		}
@@ -297,7 +297,7 @@ public class WitcheryRecipe {
 		final int sizeNew = InfusionsNew.size();		
 		try {
 			if (sizeNew < sizeOld) {
-				ReflectionUtils.setFinal(RiteRegistry.instance(), "registry", InfusionsNew);
+				ReflectionUtils.setFinal(Infusion.Registry.instance(), "registry", InfusionsNew);
 				return true;				
 			}			
 		}

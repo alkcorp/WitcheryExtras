@@ -1,11 +1,14 @@
 package alkalus.main.core.util;
 
 import java.util.HashSet;
+import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
@@ -51,7 +54,7 @@ public class Utils {
 				}				
 			}
 		}		
-		
+
 		ItemStack[] V = new ItemStack[] {};
 		int mSlot = 0;
 		if (Q.size() > 0) {
@@ -61,6 +64,31 @@ public class Utils {
 			}
 		}
 		return V;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static synchronized boolean removeAllCraftingRecipesByOutputItem(final ItemStack I){
+		if (I == null) {
+			return false;
+		}
+		
+		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+		return recipes.removeIf(s -> (s != null) && (s.getRecipeOutput() != null) && (s.getRecipeOutput().isItemEqual(I)));
+		/*
+		int mRemoved = 0;
+		Iterator<IRecipe> cI = recipes.iterator();
+		while (cI.hasNext()) {
+			IRecipe U = cI.next();
+			final ItemStack is = U.getRecipeOutput();
+			if ((is != null) && (is.isItemEqual(I))){
+				WitcheryExtras.log(1, "Removing all crafting recipes for "+is.getDisplayName()+".");
+				recipes.remove(U);
+				mRemoved++;
+				continue;
+			}
+			continue;
+		}		
+		return mRemoved > 0;*/
 	}
 
 	public static void registerEvent(Object o){
