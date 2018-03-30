@@ -28,6 +28,12 @@ public class WitcheryRecipe {
 	}
 
 	public static synchronized boolean removeDistilleryRecipe(DistilleryRecipe mRecipe) {
+		
+		if (mRecipe == null) {
+			WitcheryExtras.log(2, "Null Distillery Recipe parsed into removeDistilleryRecipe(). Please check all DistilleryRecipes are valid before calling this function.");
+			return false;
+		}
+		
 		ArrayList<DistilleryRecipe> recipesOld = new ArrayList<DistilleryRecipe>();
 		ArrayList<DistilleryRecipe> recipesNew = new ArrayList<DistilleryRecipe>();		
 		recipesOld = DistilleryRecipes.instance().recipes;
@@ -63,6 +69,12 @@ public class WitcheryRecipe {
 	}
 
 	public static synchronized boolean removeKettleRecipe(ItemStack mOutput) {
+		
+		if (mOutput == null) {
+			WitcheryExtras.log(2, "Null Kettle Recipe parsed into removeKettleRecipe(). Please check all ItemStacks are valid before calling this function.");
+			return false;
+		}
+		
 		ArrayList<KettleRecipe> recipesOld = new ArrayList<KettleRecipe>();
 		ArrayList<KettleRecipe> recipesNew = new ArrayList<KettleRecipe>();		
 		recipesOld = KettleRecipes.instance().recipes;
@@ -103,6 +115,12 @@ public class WitcheryRecipe {
 
 	@SuppressWarnings("unchecked")
 	public static synchronized boolean removeCreaturePower(CreaturePower power) {
+		
+		if (power == null) {
+			WitcheryExtras.log(2, "Null CreaturePower parsed into removeCreaturePower(). Please check all CreaturePowers are valid before calling this function.");
+			return false;
+		}
+		
 		ArrayList<CreaturePower> recipesOld = new ArrayList<CreaturePower>();
 		ArrayList<CreaturePower> recipesNew = new ArrayList<CreaturePower>();		
 		try {
@@ -110,6 +128,8 @@ public class WitcheryRecipe {
 		}
 		catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException e1) {
 			e1.printStackTrace();
+			WitcheryExtras.log(2, "Failed to get CreaturePower Registry from Witchery. Unable to process removal of CreaturePower with ID: "+power.getCreaturePowerID()+".");
+			return false;
 		}
 		final int sizeOld = recipesOld.size();
 		CreaturePower toRemove = power;
@@ -148,6 +168,7 @@ public class WitcheryRecipe {
 
 	public static synchronized boolean removeRiteFromRiteRegistry(int ritualID) {		
 		if (ritualID < Byte.MIN_VALUE || ritualID > Byte.MAX_VALUE) {
+			WitcheryExtras.log(2, "Failed to remove Rite, ID exceeded range of a byte. Found: "+ritualID+", Expected: "+Byte.MIN_VALUE+"-"+Byte.MAX_VALUE+".");
 			return false;
 		}		
 		List<Ritual> recipesOld = new ArrayList<Ritual>();
@@ -189,7 +210,13 @@ public class WitcheryRecipe {
 		}
 	}
 	
-	public static synchronized boolean removePrediction(Prediction prediction) {				
+	public static synchronized boolean removePrediction(Prediction prediction) {	
+		
+		if (prediction == null) {
+			WitcheryExtras.log(2, "Null Prediction parsed into removePrediction(). Please check all Predictions are valid before calling this function.");
+			return false;
+		}
+					
 		Hashtable<Integer, Prediction> predictionsOld = new Hashtable<Integer, Prediction>();
 		Hashtable<Integer, Prediction> predictionsNew = new Hashtable<Integer, Prediction>();	
 		try {
@@ -197,6 +224,8 @@ public class WitcheryRecipe {
 		}
 		catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException e1) {
 			e1.printStackTrace();
+			WitcheryExtras.log(2, "Failed to get Prediction Registry from Witchery. Unable to process removal of Prediction with ID: "+prediction.predictionID+".");
+			return false;
 		}
 		final int sizeOld = predictionsOld.size();
 		int mIndexpredictions = 0;
@@ -235,39 +264,47 @@ public class WitcheryRecipe {
 		}
 	}
 	
-	public static synchronized boolean removeInfusion(Infusion infusion) {				
-		Hashtable<Integer, Prediction> predictionsOld = new Hashtable<Integer, Prediction>();
-		Hashtable<Integer, Prediction> predictionsNew = new Hashtable<Integer, Prediction>();	
+	public static synchronized boolean removeInfusion(Infusion infusion) {
+		
+		if (infusion == null) {
+			WitcheryExtras.log(2, "Null Infusion parsed into removeInfusion(). Please check all Infusions are valid before calling this function.");
+			return false;
+		}
+		
+		ArrayList<Infusion> InfusionsOld = new ArrayList<Infusion>();
+		ArrayList<Infusion> InfusionsNew = new ArrayList<Infusion>();	
 		try {
-			predictionsOld = (Hashtable<Integer, Prediction>) ReflectionUtils.getField(PredictionManager.class, "predictions").get(PredictionManager.instance());
+			InfusionsOld = (ArrayList<Infusion>) ReflectionUtils.getField(Infusion.Registry.class, "registry").get(Infusion.Registry.instance());
 		}
 		catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException e1) {
 			e1.printStackTrace();
+			WitcheryExtras.log(2, "Failed to get Infusion Registry from Witchery. Unable to process removal of Infusion with ID: "+infusion.infusionID);
+			return false;
 		}
-		final int sizeOld = predictionsOld.size();
-		int mIndexpredictions = 0;
-		Prediction toRemove = prediction;
+		final int sizeOld = InfusionsOld.size();
+		int mIndexInfusions = 0;
+		Infusion toRemove = infusion;
 		if (toRemove != null) {
-			for (Prediction n : predictionsOld.values()) {
+			for (Infusion n : InfusionsOld) {
 				if (n != toRemove) {
-					predictionsNew.put(mIndexpredictions++, n);
+					InfusionsNew.add(mIndexInfusions++, n);
 				}
 				else {
-					WitcheryExtras.log(0, "Removing Prediction: "+n.getTranslationKey()+" | "+n.predictionID);
+					WitcheryExtras.log(0, "Removing Infusion: "+n.toString()+" | "+n.infusionID);
 				}
 			}
 		}
-		final int sizeNew = predictionsNew.size();		
+		final int sizeNew = InfusionsNew.size();		
 		try {
 			if (sizeNew < sizeOld) {
-				ReflectionUtils.setFinal(RiteRegistry.instance(), "predictions", predictionsNew);
+				ReflectionUtils.setFinal(RiteRegistry.instance(), "registry", InfusionsNew);
 				return true;				
 			}			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		WitcheryExtras.log(0, "Failed to remove Prediction: "+(toRemove != null ? toRemove.getTranslationKey()+" | "+toRemove.predictionID+" | " : prediction.predictionID));
+		WitcheryExtras.log(1, "Failed to remove Infusion: "+(toRemove != null ? toRemove.toString()+" | "+toRemove.infusionID+" | " : infusion.infusionID));
 		return false;
 	}
 
