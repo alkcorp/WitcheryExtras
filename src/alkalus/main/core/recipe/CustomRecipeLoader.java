@@ -3,9 +3,9 @@ package alkalus.main.core.recipe;
 import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.recipe.fixes.GarlicRecipes;
 
-public class CustomRecipes {
+public class CustomRecipeLoader {
 
-	public CustomRecipes() {
+	public CustomRecipeLoader() {
 		run();
 	}
 	

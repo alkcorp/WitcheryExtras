@@ -32,6 +32,7 @@ public class Witchery_CreaturePower {
 	}
 	
 	private static int mCachedLastRegistryValue;
+	@SuppressWarnings("unchecked")
 	public static synchronized int getLastUsedCreaturePowerID() {
 		Object f = ReflectionUtils.getField(CreaturePower.Registry.instance(), "registry");
 		ArrayList<CreaturePower> registry;

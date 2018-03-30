@@ -10,21 +10,30 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
+import alkalus.main.api.plugin.base.BasePluginWitchery;
 import alkalus.main.core.proxy.Proxy_Common;
 import alkalus.main.core.util.Logger;
 
 @Mod(modid = WitcheryExtras.MODID, name = WitcheryExtras.NAME, version = WitcheryExtras.VERSION, dependencies = "required-after:Forge; after:witchery;")
-public class WitcheryExtras
-{
+public class WitcheryExtras {
+	
+	
 	public static final String MODID = "WitcheryExtras";
 	public static final String NAME = "Witches Cauldron";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "0.4";
 	private static final Logger log4j = new Logger();
 
-	private static Map<Integer, Runnable> mPreInitEvents = new HashMap<Integer, Runnable>();
-	private static Map<Integer, Runnable> mInitEvents = new HashMap<Integer, Runnable>();
-	private static Map<Integer, Runnable> mPostInitEvents = new HashMap<Integer, Runnable>();
-		
+	private static final Map<Integer, BasePluginWitchery> mPreInitEvents;
+	private static final Map<Integer, BasePluginWitchery> mInitEvents;
+	private static final Map<Integer, BasePluginWitchery> mPostInitEvents;
+
+	//Static Initialization block
+	static {
+		mPreInitEvents = new HashMap<Integer, BasePluginWitchery>();
+		mInitEvents = new HashMap<Integer, BasePluginWitchery>();
+		mPostInitEvents = new HashMap<Integer, BasePluginWitchery>();
+	}
+	
 	@Mod.Instance(MODID)
 	public static WitcheryExtras instance;
 	
@@ -35,24 +44,24 @@ public class WitcheryExtras
 	public synchronized void preInit(final FMLPreInitializationEvent e) {
     	log(0, "Loading "+NAME+" - v"+VERSION);
 		proxy.preInit(e);
-		for (Runnable R : getMpreinitevents()) {
-			R.run();
+		for (BasePluginWitchery bwp : getMpreinitevents()) {
+			bwp.PHASE_PRE();
 		}
 	}
 
 	@Mod.EventHandler
 	public synchronized void init(final FMLInitializationEvent e) {
 		proxy.init(e);	
-		for (Runnable R : getMinitevents()) {
-			R.run();
-		}
+		for (BasePluginWitchery bwp : getMinitevents()) {
+			bwp.PHASE_PRE();
+		}	
 	}	
 
 	@Mod.EventHandler
 	public synchronized void postInit(final FMLPostInitializationEvent e) {
 		proxy.postInit(e);	
-		for (Runnable R : getMpostinitevents()) {
-			R.run();
+		for (BasePluginWitchery bwp : getMpostinitevents()) {
+			bwp.PHASE_PRE();
 		}
 	}
 	
@@ -70,30 +79,30 @@ public class WitcheryExtras
 
 	
 	//Custom Content Loader	
-	public static synchronized final Collection<Runnable> getMpreinitevents() {
+	public static synchronized final Collection<BasePluginWitchery> getMpreinitevents() {
 		return mPreInitEvents.values();
 	}
 
-	public static synchronized final Collection<Runnable> getMinitevents() {
+	public static synchronized final Collection<BasePluginWitchery> getMinitevents() {
 		return mInitEvents.values();
 	}
 
-	public static synchronized final Collection<Runnable> getMpostinitevents() {
+	public static synchronized final Collection<BasePluginWitchery> getMpostinitevents() {
 		return mPostInitEvents.values();
 	}
 
 	private static int mID_1 = 0;
-	public static synchronized final void addEventPreInit(Runnable mpreinitevent) {
-		mPreInitEvents.put(mID_1++, mpreinitevent);
+	public static synchronized final void addEventPreInit(BasePluginWitchery basePluginWitchery) {
+		mPreInitEvents.put(mID_1++, basePluginWitchery);
 	}
 
 	private static int mID_2 = 0;
-	public static synchronized final void setMinitevents(Runnable minitevents) {
+	public static synchronized final void addEventInit(BasePluginWitchery minitevents) {
 		mInitEvents.put(mID_2++, minitevents);
 	}
 
 	private static int mID_3 = 0;
-	public static synchronized final void setMpostinitevents(Runnable mpostinitevents) {
+	public static synchronized final void addEventPostInit(BasePluginWitchery mpostinitevents) {
 		mPostInitEvents.put(mID_3++, mpostinitevents);
 	}
 	

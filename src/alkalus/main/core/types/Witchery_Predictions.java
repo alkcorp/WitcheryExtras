@@ -8,6 +8,7 @@ import alkalus.main.core.util.ReflectionUtils;
 
 public class Witchery_Predictions {
 	
+	@SuppressWarnings("unchecked")
 	public static synchronized Hashtable<Integer, Prediction> getPredictions() {
 		Object f = ReflectionUtils.getField(PredictionManager.instance(), "predictions");
 		Hashtable<Integer, Prediction> registry;

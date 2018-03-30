@@ -1,4 +1,4 @@
-package alkalus.main.core.recipe;
+package alkalus.main.core.util;
 
 import java.util.*;
 
@@ -16,9 +16,8 @@ import com.emoniph.witchery.ritual.RiteRegistry.Ritual;
 import net.minecraft.item.ItemStack;
 
 import alkalus.main.core.WitcheryExtras;
-import alkalus.main.core.util.ReflectionUtils;
 
-public class WitcheryRecipe {
+public class WitcheryRecipeHandlerInternal {
 
 	public static synchronized boolean addDistilleryRecipe(ItemStack input1, ItemStack input2, int jars, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4) {
 		if (DistilleryRecipes.instance().addRecipe(input1, input2, jars, output1, output2, output3, output4) != null) {

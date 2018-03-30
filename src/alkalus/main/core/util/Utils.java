@@ -70,29 +70,14 @@ public class Utils {
 	public static synchronized boolean removeAllCraftingRecipesByOutputItem(final ItemStack I){
 		if (I == null) {
 			return false;
-		}
-		
+		}		
 		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
 		return recipes.removeIf(s -> (s != null) && (s.getRecipeOutput() != null) && (s.getRecipeOutput().isItemEqual(I)));
-		/*
-		int mRemoved = 0;
-		Iterator<IRecipe> cI = recipes.iterator();
-		while (cI.hasNext()) {
-			IRecipe U = cI.next();
-			final ItemStack is = U.getRecipeOutput();
-			if ((is != null) && (is.isItemEqual(I))){
-				WitcheryExtras.log(1, "Removing all crafting recipes for "+is.getDisplayName()+".");
-				recipes.remove(U);
-				mRemoved++;
-				continue;
-			}
-			continue;
-		}		
-		return mRemoved > 0;*/
 	}
 
 	public static void registerEvent(Object o){
 		MinecraftForge.EVENT_BUS.register(o);
 		FMLCommonHandler.instance().bus().register(o);
 	}
+	
 }
