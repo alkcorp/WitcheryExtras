@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 
 import alkalus.main.api.RecipeManager;
 import alkalus.main.api.plugin.base.BasePluginWitchery;
-import alkalus.main.core.types.*;
 
 public class ExamplePlugin extends BasePluginWitchery {
 
@@ -62,13 +61,13 @@ public class ExamplePlugin extends BasePluginWitchery {
 	public boolean postInit() {
 		//Remove Recipes Here
 		RecipeManager.Kettle.removeRecipe(Witchery.Items.GENERIC.itemHappenstanceOil.createStack());
-		RecipeManager.Distillery.removeRecipe(Witchery_Distillery.findRecipeUsing(new ItemStack(Items.diamond)));
+		RecipeManager.Distillery.removeRecipe(RecipeManager.Distillery.findRecipeUsingIngredient(new ItemStack(Items.diamond)));
 		RecipeManager.RitesAndRituals.remove((byte) 1);
-		RecipeManager.Infusions.remove(Witchery_Infusion.getInfusion(3));
-		for (Prediction H : Witchery_Predictions.getPredictions().values()) {
+		RecipeManager.Infusions.remove(RecipeManager.Infusions.getInfusion(3));
+		for (Prediction H : RecipeManager.Predictions.getPredictions().values()) {
 			RecipeManager.Predictions.remove(H);
 		}		
-		RecipeManager.CreaturePowers.remove(Witchery_CreaturePower.getCreaturePower(Witchery_CreaturePower.getLastUsedCreaturePowerID()));
+		RecipeManager.CreaturePowers.remove(RecipeManager.CreaturePowers.getCreaturePower(18));
 		return true;
 	}
 

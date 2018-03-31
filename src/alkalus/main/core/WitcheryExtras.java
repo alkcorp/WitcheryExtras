@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
+import alkalus.main.api.plugin.ExamplePlugin;
 import alkalus.main.api.plugin.base.BasePluginWitchery;
 import alkalus.main.core.proxy.Proxy_Common;
 import alkalus.main.core.util.Logger;
@@ -19,8 +20,8 @@ public class WitcheryExtras {
 	
 	
 	public static final String MODID = "WitcheryExtras";
-	public static final String NAME = "Witches Cauldron";
-	public static final String VERSION = "0.4";
+	public static final String NAME = "Witchery++";
+	public static final String VERSION = "0.7";
 	private static final Logger log4j = new Logger();
 
 	private static final Map<Integer, BasePluginWitchery> mPreInitEvents;
@@ -36,15 +37,18 @@ public class WitcheryExtras {
 	
 	@Mod.Instance(MODID)
 	public static WitcheryExtras instance;
-	
 	@SidedProxy(clientSide = "alkalus.main.core.proxy.Proxy_Client", serverSide = "alkalus.main.core.proxy.Proxy_Server")
 	public static Proxy_Common proxy;
 
+	
+	
+	
 	@Mod.EventHandler
 	public synchronized void preInit(final FMLPreInitializationEvent e) {
-    	log(0, "Loading "+NAME+" - v"+VERSION);
+    	log(0, "Loading "+NAME+" - v"+VERSION);    	
 		proxy.preInit(e);
 		for (BasePluginWitchery bwp : getMpreinitevents()) {
+			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Pre-Init");
 			bwp.preInit();
 		}
 	}
@@ -53,6 +57,7 @@ public class WitcheryExtras {
 	public synchronized void init(final FMLInitializationEvent e) {
 		proxy.init(e);	
 		for (BasePluginWitchery bwp : getMinitevents()) {
+			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Init");
 			bwp.init();
 		}	
 	}	
@@ -61,9 +66,15 @@ public class WitcheryExtras {
 	public synchronized void postInit(final FMLPostInitializationEvent e) {
 		proxy.postInit(e);	
 		for (BasePluginWitchery bwp : getMpostinitevents()) {
+			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Post-Init");
 			bwp.postInit();
 		}
 	}
+	
+	
+	
+	
+	
 	
 	public static final void log(int level, String text) {
 		if (level<=0) {
