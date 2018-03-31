@@ -45,7 +45,7 @@ public class WitcheryExtras {
     	log(0, "Loading "+NAME+" - v"+VERSION);
 		proxy.preInit(e);
 		for (BasePluginWitchery bwp : getMpreinitevents()) {
-			bwp.PHASE_PRE();
+			bwp.preInit();
 		}
 	}
 
@@ -53,7 +53,7 @@ public class WitcheryExtras {
 	public synchronized void init(final FMLInitializationEvent e) {
 		proxy.init(e);	
 		for (BasePluginWitchery bwp : getMinitevents()) {
-			bwp.PHASE_PRE();
+			bwp.init();
 		}	
 	}	
 
@@ -61,7 +61,7 @@ public class WitcheryExtras {
 	public synchronized void postInit(final FMLPostInitializationEvent e) {
 		proxy.postInit(e);	
 		for (BasePluginWitchery bwp : getMpostinitevents()) {
-			bwp.PHASE_PRE();
+			bwp.postInit();
 		}
 	}
 	

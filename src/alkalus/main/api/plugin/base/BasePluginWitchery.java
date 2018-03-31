@@ -1,5 +1,7 @@
 package alkalus.main.api.plugin.base;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import alkalus.main.api.RecipeManager;
@@ -32,6 +34,13 @@ public abstract class BasePluginWitchery implements WitcheryPlugin {
 	 */
 	public BasePluginWitchery(Set<LoadPhase> phases) {
 		this(phases, true);
+	}
+	
+	/** Dictates which stages your plugin will load in.
+	 * @param initStage - Multiple {@link LoadPhase}s. Maximum 3.
+	 */
+	public BasePluginWitchery(LoadPhase[] phases) {
+		this(new HashSet<LoadPhase>(Arrays.asList(phases)), true);
 	}
 	
 	/**
