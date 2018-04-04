@@ -5,6 +5,7 @@ import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -79,5 +80,35 @@ public class Utils {
 		MinecraftForge.EVENT_BUS.register(o);
 		FMLCommonHandler.instance().bus().register(o);
 	}
-	
+
+	public static boolean hasValidOreDictTag(String validTag, ItemStack hasTag) {
+		if (hasTag != null) {					
+			for(int tag: OreDictionary.getOreIDs(hasTag)) { 
+				String oreName = OreDictionary.getOreName(tag);
+				if (oreName.equalsIgnoreCase(validTag)) {
+					return true;
+				}
+
+			}
+		}
+		return false;
+	}
+
+	public static ItemStack simpleMetaStack(final Item item, final int meta, final int size){
+		try {
+			if (item == null){
+				return null;
+			}
+			final ItemStack metaStack = new ItemStack(item,size,meta);
+			return metaStack;				
+
+		} catch (final NullPointerException e) {
+			return null;
+		}
+	}
+
+	public static ItemStack simpleMetaStack(final Block block, final int meta, final int size) {
+		return simpleMetaStack(Item.getItemFromBlock(block), meta, size);
+	}
+
 }

@@ -1,6 +1,7 @@
 package alkalus.main.core.recipe;
 
 import alkalus.main.core.WitcheryExtras;
+import alkalus.main.core.crafting.OvenRecipes;
 import alkalus.main.core.recipe.fixes.GarlicRecipes;
 
 public class CustomRecipeLoader {
@@ -14,6 +15,7 @@ public class CustomRecipeLoader {
 		
 		//Fixes recipes that hardcode Witchery Garlic types.
 		new GarlicRecipes();
+		OvenRecipes.instance().generateDefaultOvenRecipes();
 		
 	}
 

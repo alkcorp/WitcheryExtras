@@ -10,8 +10,11 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
+import net.minecraft.block.Block;
+
 import alkalus.main.api.plugin.ExamplePlugin;
 import alkalus.main.api.plugin.base.BasePluginWitchery;
+import alkalus.main.core.block.BlockWitchesOvenEx;
 import alkalus.main.core.proxy.Proxy_Common;
 import alkalus.main.core.util.Logger;
 
@@ -27,6 +30,10 @@ public class WitcheryExtras {
 	private static final Map<Integer, BasePluginWitchery> mPreInitEvents;
 	private static final Map<Integer, BasePluginWitchery> mInitEvents;
 	private static final Map<Integer, BasePluginWitchery> mPostInitEvents;
+	
+	//Custom Witches Oven
+	public static Block OVEN_IDLE;
+	public static Block OVEN_BURNING;
 
 	//Static Initialization block
 	static {
@@ -47,6 +54,13 @@ public class WitcheryExtras {
 	public synchronized void preInit(final FMLPreInitializationEvent e) {
     	log(0, "Loading "+NAME+" - v"+VERSION);    	
 		proxy.preInit(e);
+		
+		//Load Blocks
+		WitcheryExtras.OVEN_IDLE = new BlockWitchesOvenEx(false).setBlockName(MODID+":witchesovenidle_2")
+				.setBlockTextureName("witchery:witchesOven");
+		WitcheryExtras.OVEN_BURNING = new BlockWitchesOvenEx(true).setBlockName(MODID+":witchesovenburning_2")
+				.setBlockTextureName("witchery:witchesOven");
+		
 		for (BasePluginWitchery bwp : getMpreinitevents()) {
 			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Pre-Init");
 			bwp.preInit();

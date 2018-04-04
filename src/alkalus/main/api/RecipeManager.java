@@ -98,7 +98,7 @@ public class RecipeManager {
 			return WitcheryRecipeHandlerInternal.addDistilleryRecipe(input1, input2, jars, output1, output2, output3, output4);
 		}
 		/** This Function will remove the  {@link KettleRecipe} inputt.
-		 * @param mOutput - An {@link DistilleryRecipe} for a recipe you wish to remove.
+		 * @param outputs - An {@link DistilleryRecipe} for a recipe you wish to remove.
 		 * @return - {@link boolean} representing whether or not the recipe was removed.
 		 */
 		public static synchronized boolean removeRecipe(DistilleryRecipe mRecipe) {
@@ -114,14 +114,14 @@ public class RecipeManager {
 			return Witchery_Distillery.getDistillingResult(input1, input2, jars);
 		}
 		/** This Function will find the first {@link DistilleryRecipe} it finds that matches the specified output.
-		 * @param mOutput - An {@link ItemStack} of the Output, for a recipe you wish to find.
+		 * @param outputs - An {@link ItemStack} of the Output, for a recipe you wish to find.
 		 * @return - An {@link DistilleryRecipe} representing the closest matching recipe.
 		 */
 		public static synchronized DistilleryRecipe findRecipeForOutput(ItemStack result){
 			return Witchery_Distillery.findRecipeFor(result);
 		}
 		/** This Function will find the first {@link DistilleryRecipe} it finds that matches the specified ingredient.
-		 * @param mOutput - An {@link ItemStack} of the ingredient, for a recipe you wish to find.
+		 * @param outputs - An {@link ItemStack} of the ingredient, for a recipe you wish to find.
 		 * @return - A {@link DistilleryRecipe} representing the closest matching recipe.
 		 */
 		public static synchronized DistilleryRecipe findRecipeUsingIngredient(ItemStack ingredient){
