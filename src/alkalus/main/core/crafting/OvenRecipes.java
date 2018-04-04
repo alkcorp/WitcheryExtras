@@ -119,7 +119,11 @@ public class OvenRecipes {
 			y[0] = true;
 		}
 		else {
-			ItemStack s = FurnaceRecipes.smelting().getSmeltingResult(Utils.getAllItemsFromOreDictEntry(inputString1)[0]);
+			ItemStack[] w = Utils.getAllItemsFromOreDictEntry(inputString1);
+			ItemStack s = null;
+			if (w != null && w.length > 0) {
+				s = FurnaceRecipes.smelting().getSmeltingResult(w[0]);
+			}			
 			if (s != null) {
 				mOutputStack = s;
 				mOutputAmount = s.stackSize;
