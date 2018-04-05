@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 
 import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.crafting.OvenRecipes;
+import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
 import alkalus.main.core.util.Utils;
 
 import com.emoniph.witchery.Witchery;
@@ -510,11 +511,17 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		}
 
 		public OvenRecipes.OvenRecipe getActiveRecipe() {
-			if (this.furnaceItemStacks[SLOT_TO_COOK] == null && this.furnaceItemStacks[SLOT_JARS] == null) {
+			try {
+				if (this.furnaceItemStacks[SLOT_TO_COOK] == null && this.furnaceItemStacks[SLOT_JARS] == null) {
+					return null;
+				}
+				final OvenRecipes.OvenRecipe recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);
+				return recipe;
+			}
+			catch (Throwable t) {
+				t.printStackTrace();
 				return null;
 			}
-			final OvenRecipes.OvenRecipe recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);
-			return recipe;
 		}
 
 		public void smeltItem() {
@@ -626,12 +633,15 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			final double funnels = this.getFumeFunnelsChance();
 			Random R = new Random();
 			int r1 = R.nextInt(2);
-			if (this.worldObj.rand.nextDouble() <= Math.min(BASE_CHANCE + funnels, 1.0)	&& this.furnaceItemStacks[SLOT_JARS] != null) {			
-				if (Utils.hasValidOreDictTag("treeSapling", this.getActiveRecipe().inputs)){
-					if (this.getStackInSlot(SLOT_JARS) != null && this.getStackInSlot(SLOT_JARS).stackSize >= r1) {
-						this.setJarOutputSlot(Utils.getSimpleStack(this.getActiveRecipe().outputJar, r1));
-					}
-				}				
+			if (this.worldObj.rand.nextDouble() <= Math.min(BASE_CHANCE + funnels, 1.0)	&& this.furnaceItemStacks[SLOT_JARS] != null) {	
+				OvenRecipe x = this.getActiveRecipe();
+				if (x != null) {
+					if (Utils.hasValidOreDictTag("treeSapling", x.inputs)){
+						if (this.getStackInSlot(SLOT_JARS) != null && this.getStackInSlot(SLOT_JARS).stackSize >= r1) {
+							this.setJarOutputSlot(Utils.getSimpleStack(this.getActiveRecipe().outputJar, r1));
+						}
+					}	
+				}
 			}
 			return false;
 		}
