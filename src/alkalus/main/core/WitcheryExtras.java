@@ -9,16 +9,17 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 import net.minecraft.block.Block;
 
-import alkalus.main.api.plugin.ExamplePlugin;
 import alkalus.main.api.plugin.base.BasePluginWitchery;
 import alkalus.main.core.block.BlockWitchesOvenEx;
 import alkalus.main.core.proxy.Proxy_Common;
 import alkalus.main.core.util.Logger;
 
-@Mod(modid = WitcheryExtras.MODID, name = WitcheryExtras.NAME, version = WitcheryExtras.VERSION, dependencies = "required-after:Forge; after:witchery;")
+@Mod(modid = WitcheryExtras.MODID, name = WitcheryExtras.NAME, version = WitcheryExtras.VERSION, guiFactory = "alkalus.main.core.util.GuiFactory", dependencies = "required-after:Forge; after:witchery;")
 public class WitcheryExtras {
 	
 	
@@ -69,11 +70,15 @@ public class WitcheryExtras {
 
 	@Mod.EventHandler
 	public synchronized void init(final FMLInitializationEvent e) {
+		
+		NetworkRegistry.INSTANCE.registerGuiHandler((Object) this, (IGuiHandler) WitcheryExtras.proxy);
+		
 		proxy.init(e);	
 		for (BasePluginWitchery bwp : getMinitevents()) {
 			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Init");
 			bwp.init();
-		}	
+		}
+		proxy.registerRenderers();
 	}	
 
 	@Mod.EventHandler

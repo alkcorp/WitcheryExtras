@@ -95,7 +95,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		}
 		final TileEntity tileentityfurnace = par1World.getTileEntity(par2, par3, par4);
 		if (tileentityfurnace != null) {
-			par5EntityPlayer.openGui((Object) Witchery.instance, 2, par1World, par2, par3, par4);
+			par5EntityPlayer.openGui((Object) WitcheryExtras.instance, 2, par1World, par2, par3, par4);
 		}
 		return true;
 	}
