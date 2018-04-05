@@ -222,6 +222,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		public int currentItemBurnTime;
 		public int furnaceCookTime;
 		static final int COOK_TIME = 180;
+		private int cooldownTimer = 500;
 		private static final double FUNNEL_CHANCE = 0.25;
 		private static final double FILTERED_FUNNEL_CHANCE = 0.3;
 		private static final double DOUBLED_FILTERED_FUNNEL_CHANCE = 0.8;
@@ -339,14 +340,23 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			return this.furnaceBurnTime > 0;
 		}
 
-		public void updateEntity() {
+		public void updateEntity() {			
+			if (cooldownTimer > 0) {
+				cooldownTimer--;
+			}
+			if (cooldownTimer < 0 || cooldownTimer > 500) {
+				cooldownTimer = 500;
+			}
+			
+			
 			final boolean flag = this.furnaceBurnTime > 0;
 			boolean flag2 = false;
 			if (this.furnaceBurnTime > 0) {
 				--this.furnaceBurnTime;
 			}
 			if (!this.worldObj.isRemote) {
-				if (this.furnaceBurnTime == 0 && this.canSmelt()) {
+				if (cooldownTimer == 0 && this.furnaceBurnTime == 0 && this.canSmelt()) {
+					cooldownTimer = 500;
 					final int itemBurnTime = TileEntityFurnace.getItemBurnTime(this.furnaceItemStacks[SLOT_FUEL]);
 					this.furnaceBurnTime = itemBurnTime;
 					this.currentItemBurnTime = itemBurnTime;
@@ -362,7 +372,8 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 						}
 					}
 				}
-				if (this.isBurning() && this.canSmelt()) {
+				if (cooldownTimer == 0 && this.isBurning() && this.canSmelt()) {
+					cooldownTimer = 500;
 					++this.furnaceCookTime;
 					if (this.furnaceCookTime >= this.getCookTime()) {
 						this.furnaceCookTime = 0;
@@ -519,7 +530,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 				return recipe;
 			}
 			catch (Throwable t) {
-				t.printStackTrace();
+				//t.printStackTrace();
 				return null;
 			}
 		}

@@ -7,6 +7,7 @@ import alkalus.main.core.util.Utils;
 import com.emoniph.witchery.Witchery;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -38,6 +39,8 @@ public class OvenRecipes {
 		//Raw Materials
 		addRecipe("treewood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
 		addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
+		
+		addRecipe(Utils.getSimpleStack(Items.cake, 1), 2, Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1), 2, Utils.getSimpleStack(Items.diamond, 1), 1);
 		
 	}	
 
