@@ -8,7 +8,6 @@ import alkalus.main.core.util.Utils;
 import com.emoniph.witchery.Witchery;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -38,10 +37,8 @@ public class OvenRecipes {
 		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemOdourOfPurity.createStack(1));
 		
 		//Raw Materials
-		addRecipe("treewood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
+		addRecipe("logWood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
 		addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
-		
-		addRecipe(Utils.getSimpleStack(Items.cake, 1), 2, Utils.getSimpleStack(Items.diamond, 1), 1, Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1), 2);
 		
 	}	
 
@@ -332,14 +329,17 @@ public class OvenRecipes {
 		}
 
 		public String getDescription() {
-			String[] y = new String[]{"descriptor"
-					+ ("Input: " + this.inputs.getDisplayName()) +
-					 ("Jars Required: " + this.jars) +
-					 ("Output: " + this.output.getDisplayName()) +
-					 ("Jar Output: " + this.outputJar.getDisplayName()) +
-					 ("OreDict: " + this.validOreDictInput) +
-					 ("" + this.inputs.getDisplayName())};
+			String[] y = new String[]{"descriptor",
+					("Input: " + (inputs != null ? this.inputs.getDisplayName() : "No Item") + " x" +(inputs != null ? inputs.stackSize : 0)),
+					 ("Jars Required: " + this.jars),
+					 ("Output: " + (output != null ? this.output.getDisplayName() : "No Item") + " x" +(output != null ? output.stackSize : 0)),
+					 ("Jar Output: " + this.outputJar.getDisplayName() + " x"+jars),
+					 ("OreDict: " + this.validOreDictInput)
+					 };
 			String z = "";
+			for (String x : y) {
+				WitcheryExtras.log(0, x);
+			}
 			for (String x : y) {
 				z += "."+x;
 			}

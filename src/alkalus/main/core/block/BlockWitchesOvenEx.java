@@ -33,6 +33,7 @@ import net.minecraft.world.World;
 import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.crafting.OvenRecipes;
 import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
+import alkalus.main.core.util.MathUtils;
 import alkalus.main.core.util.Utils;
 
 import com.emoniph.witchery.Witchery;
@@ -223,6 +224,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		public int furnaceCookTime;
 		static final int COOK_TIME = 180;
 		private int cooldownTimer = 500;
+		private boolean isCooking = false;
 		private static final double FUNNEL_CHANCE = 0.25;
 		private static final double FILTERED_FUNNEL_CHANCE = 0.3;
 		private static final double DOUBLED_FILTERED_FUNNEL_CHANCE = 0.8;
@@ -298,6 +300,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 					this.furnaceItemStacks[b0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
 				}
 			}
+			this.isCooking = par1NBTTagCompound.getBoolean("isCooking");
 			this.furnaceBurnTime = par1NBTTagCompound.getShort("BurnTime");
 			this.furnaceCookTime = par1NBTTagCompound.getShort("CookTime");
 			this.currentItemBurnTime = TileEntityFurnace.getItemBurnTime(this.furnaceItemStacks[SLOT_FUEL]);
@@ -305,6 +308,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 
 		public void writeToNBT(final NBTTagCompound par1NBTTagCompound) {
 			super.writeToNBT(par1NBTTagCompound);
+			par1NBTTagCompound.setBoolean("isCooking", this.isCooking);
 			par1NBTTagCompound.setShort("BurnTime", (short) this.furnaceBurnTime);
 			par1NBTTagCompound.setShort("CookTime", (short) this.furnaceCookTime);
 			final NBTTagList nbttaglist = new NBTTagList();
@@ -344,8 +348,12 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			if (cooldownTimer != 0) {
 				cooldownTimer = 0;
 			}
-			
-			
+			if (this.isCooking) {
+				if (this.furnaceItemStacks[SLOT_TO_COOK] == null || furnaceCookTime == 0) {
+					this.isCooking = false;
+				}
+			}
+
 			final boolean flag = this.furnaceBurnTime > 0;
 			boolean flag2 = false;
 			if (this.furnaceBurnTime > 0) {
@@ -446,6 +454,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		private double getFumeFunnelChance(final int x, final int y, final int z, final int meta) {
 			final Block block = this.worldObj.getBlock(x, y, z);
 			if (block == Witchery.Blocks.OVEN_FUMEFUNNEL) {
+				WitcheryExtras.log(0, "Found Fume Funnel");
 				if (this.worldObj.getBlockMetadata(x, y, z) == meta) {
 					return FUNNEL_CHANCE;
 				}
@@ -458,7 +467,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		}
 
 		private int getCookTime() {
-			final int time = 180 - 20 * this.getFumeFunnels();
+			int time = 180 - 20 * this.getFumeFunnels();			
 			return time;
 		}
 
@@ -513,12 +522,12 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			if (recipe == null) {
 				return false;
 			}
-			return true;
+			return true && !this.isCooking;
 		}
 
 		public OvenRecipes.OvenRecipe getActiveRecipe() {
 			try {
-				if (this.furnaceItemStacks[SLOT_TO_COOK] == null && this.furnaceItemStacks[SLOT_JARS] == null) {
+				if (this.furnaceItemStacks[SLOT_TO_COOK] == null || this.furnaceItemStacks[SLOT_JARS] == null) {
 					return null;
 				}
 				final OvenRecipes.OvenRecipe recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);
@@ -531,29 +540,47 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		}
 
 		public void smeltItem() {
-			if (this.canSmelt()) {				
+			if (this.canSmelt() && !isCooking) {
 				final OvenRecipes.OvenRecipe recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);
-				if (recipe != null) {					
+				if (recipe != null) {
+					this.isCooking = true;					
 					if (setInputSlot(recipe.inputs) && setJarInputSlot(OvenRecipes.getEmptyJar(recipe.jars))){
 						if (setOutputSlot(recipe.output) && setJarOutputSlot(recipe.outputJar)) {
-							WitcheryExtras.log(0, "Completed Witches Oven Recipe.");							
-							if (getFumeFunnels() > 0) {								
-								Random R = new Random();
-								if (R.nextInt(100) <= getFumeFunnelsChance()) {
+							WitcheryExtras.log(0, "Completed Witches Oven Recipe.");
+							this.isCooking = false;							
+							if (getFumeFunnels() > 0) {	
+								WitcheryExtras.log(0, "Found "+getFumeFunnels()+" Fume Funnels.");
+								if (MathUtils.randInt(0, 100) <= getFumeFunnelsChance()) {
 									WitcheryExtras.log(0, "Adding extra byproducts.");			
 									generateExtraByproducts();
 								}								
 							}
-
+							else {
+								WitcheryExtras.log(0, "Recipe was invalid.");					
+							}
+							//Allow another recipe
+						}
+						else {
+							WitcheryExtras.log(0, "Could not add outputs.");					
 						}
 					}
-				}								
+					else {
+						WitcheryExtras.log(0, "Could not consume inputs.");					
+					}
+				}
+				else {
+					WitcheryExtras.log(0, "Recipe was invalid.");					
+				}
 			}
 		}	
 
 
 		private boolean setInputSlot(ItemStack aStack) {			
-			if (furnaceItemStacks[SLOT_TO_COOK] != null) {
+			if (aStack == null) {
+				WitcheryExtras.log(0, "Tried setting null stack in InputSlot.");
+				return false;
+			}					
+			if (furnaceItemStacks[SLOT_TO_COOK] != null && this.isCooking) {
 				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_TO_COOK])){
 					int size = (furnaceItemStacks[SLOT_TO_COOK].stackSize - aStack.stackSize);
 					if (size <= 64 && size > 0) {
@@ -573,8 +600,15 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			return false;
 		}
 
-		private boolean setOutputSlot(ItemStack aStack) {
-			if (furnaceItemStacks[SLOT_COOKED] != null) {
+		private boolean setOutputSlot(ItemStack aStack) {			
+			if (aStack == null) {
+				WitcheryExtras.log(0, "Tried setting null stack in OutputSlot.");
+				return false;
+			}		
+			else {
+				WitcheryExtras.log(0, "Trying to add x"+aStack.stackSize+" "+aStack.getDisplayName()+" to Output Slot.");
+			}
+			if (furnaceItemStacks[SLOT_COOKED] != null && this.isCooking) {
 				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_COOKED])){
 					int size = (furnaceItemStacks[SLOT_COOKED].stackSize + aStack.stackSize);
 					if (size <= 64 && size > 0) {
@@ -582,6 +616,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 						return true;
 					}
 					else {
+						WitcheryExtras.log(0, "Could not add outputs, stack size would exceed max size. ["+size+"] Slot Size: "+furnaceItemStacks[SLOT_COOKED].stackSize + " | Trying to add " + aStack.stackSize);
 						return false;
 					}
 				}
@@ -589,12 +624,17 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			else {
 				furnaceItemStacks[SLOT_COOKED] = aStack;
 				return true;
-			}			
+			}		
+			WitcheryExtras.log(0, "Bad Output Somehow?. Is Cooking? "+this.isCooking);
 			return false;
 		}
 
-		private boolean setJarInputSlot(ItemStack aStack) {
-			if (furnaceItemStacks[SLOT_JARS] != null) {
+		private boolean setJarInputSlot(ItemStack aStack) {			
+			if (aStack == null) {
+				WitcheryExtras.log(0, "Tried setting null stack in JarInputSlot.");
+				return false;
+			}		
+			if (furnaceItemStacks[SLOT_JARS] != null && this.isCooking) {
 				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_JARS])){
 					int size = (furnaceItemStacks[SLOT_JARS].stackSize - aStack.stackSize);
 					if (size <= 64 && size > 0) {
@@ -614,8 +654,12 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			return false;
 		}
 
-		private boolean setJarOutputSlot(ItemStack aStack) {
-			if (furnaceItemStacks[SLOT_BY_PRODUCT] != null) {
+		private boolean setJarOutputSlot(ItemStack aStack) {			
+			if (aStack == null) {
+				WitcheryExtras.log(0, "Tried setting null stack in JarOutputSlot.");
+				return false;
+			}		
+			if (furnaceItemStacks[SLOT_BY_PRODUCT] != null && this.isCooking) {
 				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_BY_PRODUCT])){
 					int size = (furnaceItemStacks[SLOT_BY_PRODUCT].stackSize + aStack.stackSize);
 					if (size <= 64 && size > 0) {
@@ -623,6 +667,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 						return true;
 					}
 					else {
+						WitcheryExtras.log(0, "Could not add Jar outputs, stack size would exceed max size.");
 						return false;
 					}
 				}
@@ -631,6 +676,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 				furnaceItemStacks[SLOT_BY_PRODUCT] = aStack;
 				return true;
 			}			
+			WitcheryExtras.log(0, "Bad Jar Output Somehow?. Is Cooking? "+this.isCooking);
 			return false;
 		}
 
