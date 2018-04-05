@@ -7,7 +7,10 @@ import alkalus.main.core.util.Utils;
 
 import com.emoniph.witchery.Witchery;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -22,7 +25,12 @@ public class OvenRecipes {
 		return OvenRecipes.INSTANCE;
 	}
 	
-	public void generateDefaultOvenRecipes() {		
+	public void generateDefaultOvenRecipes() {	
+		
+		//Remove recipe for the old Witches Oven
+		Utils.removeAllCraftingRecipesByOutputItem(Utils.simpleMetaStack(Witchery.Blocks.OVEN_IDLE, 0, 1));
+		GameRegistry.addShapedRecipe(Utils.simpleMetaStack(WitcheryExtras.OVEN_IDLE, 0, 1), new Object[] { " s ", "ibi", "isi", Character.valueOf('s'), new ItemStack(Blocks.iron_bars), Character.valueOf('b'), new ItemStack(Blocks.furnace), Character.valueOf('i'), new ItemStack(Items.iron_ingot) });
+		
 		//Vanilla Saplings
 		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(1)); //Oak - 0
 		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Spruce - 1

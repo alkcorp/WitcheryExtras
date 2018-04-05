@@ -57,9 +57,9 @@ public class WitcheryExtras {
 		proxy.preInit(e);
 		
 		//Load Blocks
-		WitcheryExtras.OVEN_IDLE = new BlockWitchesOvenEx(false).setBlockName(MODID+":witchesovenidle_2")
+		WitcheryExtras.OVEN_IDLE = new BlockWitchesOvenEx(false).setBlockName("witchesovenexidle")
 				.setBlockTextureName("witchery:witchesOven");
-		WitcheryExtras.OVEN_BURNING = new BlockWitchesOvenEx(true).setBlockName(MODID+":witchesovenburning_2")
+		WitcheryExtras.OVEN_BURNING = new BlockWitchesOvenEx(true).setBlockName("witchesovenexburning")
 				.setBlockTextureName("witchery:witchesOven");
 		
 		for (BasePluginWitchery bwp : getMpreinitevents()) {

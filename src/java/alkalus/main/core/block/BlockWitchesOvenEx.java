@@ -544,7 +544,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 				final OvenRecipes.OvenRecipe recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);
 				if (recipe != null) {
 					this.isCooking = true;					
-					if (setInputSlot(recipe.inputs) && setJarInputSlot(OvenRecipes.getEmptyJar(recipe.jars))){
+					if (setInputSlot(recipe.inputs != null ? recipe.inputs : this.furnaceItemStacks[SLOT_TO_COOK]) && setJarInputSlot(OvenRecipes.getEmptyJar(recipe.jars))){
 						if (setOutputSlot(recipe.output) && setJarOutputSlot(recipe.outputJar)) {
 							WitcheryExtras.log(0, "Completed Witches Oven Recipe.");
 							this.isCooking = false;							

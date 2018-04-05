@@ -10,7 +10,9 @@ import net.minecraft.world.World;
 
 import alkalus.main.core.block.BlockWitchesOvenEx;
 import alkalus.main.core.block.BlockWitchesOvenEx.TileEntityWitchesOvenEx;
+import alkalus.main.core.handler.TooltipHandler;
 import alkalus.main.core.recipe.CustomRecipeLoader;
+import alkalus.main.core.util.Utils;
 
 public class Proxy_Common implements IGuiHandler{
 	
@@ -23,7 +25,7 @@ public class Proxy_Common implements IGuiHandler{
 	}	
 
 	public synchronized void postInit(final FMLPostInitializationEvent e) {	
-
+		Utils.registerEvent(new TooltipHandler());
 	}
 
 	public void registerRenderers() {
