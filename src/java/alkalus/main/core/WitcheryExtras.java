@@ -15,6 +15,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 
 import alkalus.main.api.plugin.base.BasePluginWitchery;
+import alkalus.main.core.block.BlockFumeFunnelEx;
 import alkalus.main.core.block.BlockWitchesOvenEx;
 import alkalus.main.core.proxy.Proxy_Common;
 import alkalus.main.core.util.Logger;
@@ -35,6 +36,8 @@ public class WitcheryExtras {
 	//Custom Witches Oven
 	public static Block OVEN_IDLE;
 	public static Block OVEN_BURNING;
+	public static Block OVEN_FUMEFUNNEL;
+	public static Block OVEN_FUMEFUNNEL_FILTERED;
 
 	//Static Initialization block
 	static {
@@ -61,6 +64,10 @@ public class WitcheryExtras {
 				.setBlockTextureName("witchery:witchesOven");
 		WitcheryExtras.OVEN_BURNING = new BlockWitchesOvenEx(true).setBlockName("witchesovenexburning")
 				.setBlockTextureName("witchery:witchesOven");
+		WitcheryExtras.OVEN_FUMEFUNNEL = new BlockFumeFunnelEx(false).setBlockName("fumefunnelex")
+				.setBlockTextureName("witchery:fumefunnel");
+		WitcheryExtras.OVEN_FUMEFUNNEL_FILTERED = new BlockFumeFunnelEx(true).setBlockName("filteredfumefunnelex")
+				.setBlockTextureName("witchery:fumefunnel");
 		
 		for (BasePluginWitchery bwp : getMpreinitevents()) {
 			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Pre-Init");
@@ -100,10 +107,10 @@ public class WitcheryExtras {
 			log4j.INFO(text);
 		}
 		else if (level==1) {
-			log4j.WARNING(text);
+			//log4j.WARNING(text);
 		}
 		else {
-			log4j.ERROR(text);
+			//log4j.ERROR(text);
 		}
 	}
 

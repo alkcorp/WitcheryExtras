@@ -147,9 +147,12 @@ public class OvenRecipes {
 			ItemStack s = null;
 			if (w != null && w.length > 0) {				
 				for (int i=0;i<w.length;i++) {
-					ItemStack gh = FurnaceRecipes.smelting().getSmeltingResult(w[i]);
+					ItemStack gh = FurnaceRecipes.smelting().getSmeltingResult(w[i]).copy();
 					if (gh != null) {
-						s = gh;
+						if (gh.stackSize > 64 || gh.stackSize <= 0) {
+							gh.stackSize = 1;
+						}
+						s = Utils.getSimpleStack(gh, gh.stackSize);
 						break;
 					}
 				}				
@@ -180,10 +183,10 @@ public class OvenRecipes {
 		if (y[0] && y[1]) {
 			OvenRecipe recipe;
 			if (mInputStack != null) {
-				recipe = new OvenRecipe(mInputStack, mJars, mOutputStack, mOutputAmount, mJarOutputStack, mJarOutputAmount);
+				recipe = new OvenRecipe(mInputStack.copy(), mJars, mOutputStack.copy(), mOutputAmount, mJarOutputStack.copy(), mJarOutputAmount);
 			}
 			else {
-				recipe = new OvenRecipe(mInputString, mJars, mOutputStack, mOutputAmount, mJarOutputStack, mJarOutputAmount);
+				recipe = new OvenRecipe(mInputString, mJars, mOutputStack.copy(), mOutputAmount, mJarOutputStack.copy(), mJarOutputAmount);
 			}			
 			this.recipes.add(recipe);
 			WitcheryExtras.log(0, "Added an Oven Recipe" + recipe.getDescription());

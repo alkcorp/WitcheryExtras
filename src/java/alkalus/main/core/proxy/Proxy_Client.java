@@ -1,6 +1,7 @@
 package alkalus.main.core.proxy;
 
 import com.emoniph.witchery.client.renderer.RenderBlockItem;
+import com.emoniph.witchery.client.renderer.RenderFumeFunnel;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -15,9 +16,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import alkalus.main.core.WitcheryExtras;
+import alkalus.main.core.block.BlockFumeFunnelEx.TileEntityFumeFunnelEx;
 import alkalus.main.core.block.BlockWitchesOvenEx;
 import alkalus.main.core.block.BlockWitchesOvenEx.TileEntityWitchesOvenEx;
 import alkalus.main.core.block.BlockWitchesOvenGUIEx;
+import alkalus.main.core.client.renderer.RenderFumeFunnelEx;
 import alkalus.main.core.client.renderer.RenderWitchesOvenEx;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -46,9 +49,10 @@ public class Proxy_Client extends Proxy_Common {
 	
 	@Override
 	public void registerRenderers() {
-		this.bindRenderer((Class<? extends TileEntity>) TileEntityWitchesOvenEx.class,
-				(TileEntitySpecialRenderer) new RenderWitchesOvenEx(), Item.getItemFromBlock(WitcheryExtras.OVEN_IDLE));
-	}
+		this.bindRenderer((Class<? extends TileEntity>) TileEntityWitchesOvenEx.class, (TileEntitySpecialRenderer) new RenderWitchesOvenEx(), Item.getItemFromBlock(WitcheryExtras.OVEN_IDLE));
+		this.bindRenderer((Class<? extends TileEntity>) TileEntityFumeFunnelEx.class, (TileEntitySpecialRenderer) new RenderFumeFunnelEx(false), Item.getItemFromBlock(WitcheryExtras.OVEN_FUMEFUNNEL));
+		this.bindRenderer((Class<? extends TileEntity>) TileEntityFumeFunnelEx.class, (TileEntitySpecialRenderer) new RenderFumeFunnelEx(true), Item.getItemFromBlock(WitcheryExtras.OVEN_FUMEFUNNEL_FILTERED));
+		}
 	
 	private void bindRenderer(final Class<? extends TileEntity> clazz, final TileEntitySpecialRenderer render,
 			final Item... items) {

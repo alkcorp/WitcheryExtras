@@ -1,49 +1,43 @@
 package alkalus.main.core.block;
 
-import net.minecraft.inventory.ICrafting;
-import com.emoniph.witchery.util.SlotClayJar;
-import net.minecraft.inventory.SlotFurnace;
-import net.minecraft.inventory.Slot;
-import net.minecraft.entity.player.InventoryPlayer;
-import com.emoniph.witchery.util.BlockSide;
-import com.emoniph.witchery.util.Config;
-import net.minecraft.init.Items;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.util.MathHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.entity.EntityLivingBase;
+import java.util.Random;
+
+import com.emoniph.witchery.Witchery;
+import com.emoniph.witchery.blocks.BlockBaseContainer;
+import com.emoniph.witchery.blocks.BlockFumeFunnel.TileEntityFumeFunnel;
+import com.emoniph.witchery.blocks.BlockWitchesOven;
+import com.emoniph.witchery.util.*;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.entity.player.EntityPlayer;
+
 import net.minecraft.block.Block;
-import com.emoniph.witchery.util.BlockUtil;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.crafting.OvenRecipes;
 import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
+import alkalus.main.core.util.BlockPos;
 import alkalus.main.core.util.MathUtils;
 import alkalus.main.core.util.Utils;
-
-import com.emoniph.witchery.Witchery;
-import com.emoniph.witchery.blocks.BlockBaseContainer;
-import com.emoniph.witchery.blocks.BlockWitchesOven;
-
-import net.minecraft.item.Item;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.block.material.Material;
-import java.util.Random;
 
 public class BlockWitchesOvenEx extends BlockBaseContainer {
 	private final Random furnaceRand;
@@ -87,7 +81,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 	}
 
 	public static boolean isOven(final Block block) {
-		return block == WitcheryExtras.OVEN_IDLE || block == WitcheryExtras.OVEN_BURNING;
+		return (block == WitcheryExtras.OVEN_IDLE || block == WitcheryExtras.OVEN_BURNING || block == Witchery.Blocks.OVEN_IDLE || block == Witchery.Blocks.OVEN_BURNING);
 	}
 
 	public boolean onBlockActivated(final World par1World, final int par2, final int par3, final int par4,
@@ -120,29 +114,62 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		}
 	}
 
+	private void spawnParticleInWorld(int chance, World world, String particle, double x, double y, double z, double velx, double vely, double velz) {
+		if (MathUtils.randInt(1, 100) <= chance) {
+			world.spawnParticle(particle, x, y, z, velx, vely, velz);
+		}
+	}
+	
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(final World par1World, final int par2, final int par3, final int par4,
 			final Random par5Random) {
 		if (this.isActive) {
-			final int l = par1World.getBlockMetadata(par2, par3, par4);
-			final float f = par2 + 0.5f;
-			final float f2 = par3 + 0.2f + par5Random.nextFloat() * 6.0f / 16.0f;
-			final float f3 = par4 + 0.5f;
-			final float f4 = 0.52f;
-			final float f5 = par5Random.nextFloat() * 0.6f - 0.3f;
-			if (l == 4) {
-				par1World.spawnParticle("smoke", (double) (f - f4), (double) f2, (double) (f3 + f5), 0.0, 0.0, 0.0);
-				par1World.spawnParticle("flame", (double) (f - f4), (double) f2, (double) (f3 + f5), 0.0, 0.0, 0.0);
-			} else if (l == 5) {
-				par1World.spawnParticle("smoke", (double) (f + f4), (double) f2, (double) (f3 + f5), 0.0, 0.0, 0.0);
-				par1World.spawnParticle("flame", (double) (f + f4), (double) f2, (double) (f3 + f5), 0.0, 0.0, 0.0);
-			} else if (l == 2) {
-				par1World.spawnParticle("smoke", (double) (f + f5), (double) f2, (double) (f3 - f4), 0.0, 0.0, 0.0);
-				par1World.spawnParticle("flame", (double) (f + f5), (double) f2, (double) (f3 - f4), 0.0, 0.0, 0.0);
-			} else if (l == 3) {
-				par1World.spawnParticle("smoke", (double) (f + f5), (double) f2, (double) (f3 + f4), 0.0, 0.0, 0.0);
-				par1World.spawnParticle("flame", (double) (f + f5), (double) f2, (double) (f3 + f4), 0.0, 0.0, 0.0);
+
+			float g1 = MathUtils.randFloat(-0.1f, 0.1f);
+			float g2 = MathUtils.randFloat(-0.2f, 0.2f);
+			float g3 = MathUtils.randFloat(-0.3f, 0.3f);
+			
+			final int l = par1World.getBlockMetadata(par2, par3, par4);		
+			
+			float x1 = par2;
+			float y1 = (0.4f + par3);
+			float z1 = par3;	
+			
+			
+			if (l == 4) {// -x				
+				x1 += 0.82f;
+				y1 += 0.4f;
+				z1 += 0.5f;				
+			} else if (l == 5) {// +x
+				x1 += -0.82f;
+				y1 += 0.4f;
+				z1 += 0.5f;
+			} else if (l == 2) {// -z
+				z1 += 0.82f;
+				y1 += 0.4f;
+				x1 += 0.5f;
+			} else if (l == 3) {// +z
+				z1 += -0.82f;
+				y1 += 0.4f + par3;
+				x1 += 0.5f;
 			}
+			
+			//Chimney			
+			spawnParticleInWorld(10, par1World, "lava", (double) x1, (double) y1+0.5, (double) z1, 0.0, 0.15, 0.0);				
+			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.05, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.05, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.09, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.09, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.14, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.19, 0.0);				
+			
+			
+			spawnParticleInWorld(80, par1World, "flame", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(80, par1World, "flame", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(80, par1World, "smoke", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
+			
+			
 		}
 	}
 
@@ -236,6 +263,8 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 		private static final int[] slots_top;
 		private static final int[] slots_bottom;
 		private static final int[] slots_sides;
+
+		private static BlockPos[] mCachedFunnels = new BlockPos[5];
 
 		public TileEntityWitchesOvenEx() {
 			this.furnaceItemStacks = new ItemStack[5];
@@ -344,7 +373,8 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			return this.furnaceBurnTime > 0;
 		}
 
-		public void updateEntity() {			
+		@Override
+		public synchronized void updateEntity() {			
 			if (cooldownTimer != 0) {
 				cooldownTimer = 0;
 			}
@@ -395,38 +425,114 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			if (flag2) {
 				this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 			}
-		}		
+		}	
 
-		private int getFumeFunnels() {
-			int funnels = 0;
+		private BlockPos getLeftFunnel() {
+			return mCachedFunnels[3];
+		}
+
+		private BlockPos getRightFunnel() {
+			return mCachedFunnels[4];
+		}
+
+		private BlockPos[] getTopFunnels() {
+			BlockPos[] y = new BlockPos[3];
+			for (int i=0;i<3;i++) {
+				y[i] = mCachedFunnels[i];
+			}
+			return y;
+		}
+
+		private synchronized boolean cacheFumeFunnels() {			
 			final int meta = this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
 			switch (meta) {
 				case 2 :
 				case 3 : {
-					funnels += (this.isFumeFunnel(this.xCoord - 1, this.yCoord, this.zCoord, meta) ? 1 : 0);
-					funnels += (this.isFumeFunnel(this.xCoord + 1, this.yCoord, this.zCoord, meta) ? 1 : 0);
+					if (this.isFumeFunnel(this.xCoord - 1, this.yCoord, this.zCoord, meta)) {
+						mCachedFunnels[3] = new BlockPos(this.xCoord - 1, this.yCoord, this.zCoord, this.worldObj);
+					}
+					else {
+						mCachedFunnels[3] = null;
+					}
+					if (this.isFumeFunnel(this.xCoord + 1, this.yCoord, this.zCoord, meta)) {
+						mCachedFunnels[4] = new BlockPos(this.xCoord + 1, this.yCoord, this.zCoord, this.worldObj);						
+					}
+					else {
+						mCachedFunnels[4] = null;
+					}
 					break;
 				}
 				case 4 :
 				case 5 : {
-					funnels += (this.isFumeFunnel(this.xCoord, this.yCoord, this.zCoord - 1, meta) ? 1 : 0);
-					funnels += (this.isFumeFunnel(this.xCoord, this.yCoord, this.zCoord + 1, meta) ? 1 : 0);
+					if (this.isFumeFunnel(this.xCoord, this.yCoord, this.zCoord - 1, meta)) {
+						mCachedFunnels[3] = new BlockPos(this.xCoord, this.yCoord, this.zCoord - 1, this.worldObj);						
+					}
+					else {
+						mCachedFunnels[3] = null;
+					}
+					if (this.isFumeFunnel(this.xCoord, this.yCoord, this.zCoord + 1, meta)) {
+						mCachedFunnels[4] = new BlockPos(this.xCoord, this.yCoord, this.zCoord + 1, this.worldObj);						
+					}
+					else {
+						mCachedFunnels[4] = null;
+					}
 					break;
 				}
 			}
-			funnels += (this.isFumeFunnel(this.xCoord, this.yCoord + 1, this.zCoord, meta) ? 1 : 0);
+			for (int y=0;y<3;y++) {
+				if (this.isFumeFunnel(this.xCoord, this.yCoord + (y+1), this.zCoord, meta)) {
+					mCachedFunnels[y] = new BlockPos(this.xCoord, this.yCoord + (y+1), this.zCoord, this.worldObj);
+				}
+				else {
+					mCachedFunnels[y] = null;
+				}
+			}		
+			boolean success = true;
+			for (BlockPos g : mCachedFunnels) {
+				if (g == null || !isFumeFunnel(g.xPos, g.yPos, g.zPos, g.getMetaAtPos())) {
+					success = false;
+				}
+				else {
+					TileEntity T1 = (TileEntity) this.getWorldObj().getTileEntity(g.xPos, g.yPos, g.zPos);
+					if (T1 != null && T1 instanceof TileEntityFumeFunnel) {
+						TileEntity T2 = (TileEntityFumeFunnel) T1;
+						if (T2.getWorldObj() == null) {
+							T2.setWorldObj(worldObj);
+							WitcheryExtras.log(1,  "Set world for Funnel Tile.");
+						}
+					}
+
+				}
+			}			
+			return success;
+		}
+
+		private int getFumeFunnels() {			
+			cacheFumeFunnels();		
+			int funnels = 0;			
+			for (BlockPos b : TileEntityWitchesOvenEx.mCachedFunnels) {
+				if (b != null) {
+					funnels++;
+				}
+			}
 			return funnels;
 		}
 
 		private boolean isFumeFunnel(final int xCoord, final int yCoord, final int zCoord, final int meta) {
 			final Block block = this.worldObj.getBlock(xCoord, yCoord, zCoord);
-			return (block == Witchery.Blocks.OVEN_FUMEFUNNEL || block == Witchery.Blocks.OVEN_FUMEFUNNEL_FILTERED)
+			return (block == Witchery.Blocks.OVEN_FUMEFUNNEL || block == Witchery.Blocks.OVEN_FUMEFUNNEL_FILTERED || block == WitcheryExtras.OVEN_FUMEFUNNEL || block == WitcheryExtras.OVEN_FUMEFUNNEL_FILTERED)
 					&& this.worldObj.getBlockMetadata(xCoord, yCoord, zCoord) == meta;
 		}
 
 		private double getFumeFunnelsChance() {
 			double funnels = 0.0;
-			switch (this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord)) {
+			int meta = (this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord));
+
+			funnels += this.getFumeFunnelChance(this.xCoord, this.yCoord + 1, this.zCoord, meta); 
+			funnels += this.getFumeFunnelChance(this.xCoord, this.yCoord + 2, this.zCoord, meta); 
+			funnels += this.getFumeFunnelChance(this.xCoord, this.yCoord + 3, this.zCoord, meta); 
+
+			switch (meta) {
 				case 2 : {
 					funnels += this.getFumeFunnelChance(this.xCoord + 1, this.yCoord, this.zCoord, 2);
 					funnels += this.getFumeFunnelChance(this.xCoord - 1, this.yCoord, this.zCoord, 2);
@@ -453,14 +559,13 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 
 		private double getFumeFunnelChance(final int x, final int y, final int z, final int meta) {
 			final Block block = this.worldObj.getBlock(x, y, z);
-			if (block == Witchery.Blocks.OVEN_FUMEFUNNEL) {
-				WitcheryExtras.log(0, "Found Fume Funnel");
+			if (block == Witchery.Blocks.OVEN_FUMEFUNNEL || block == WitcheryExtras.OVEN_FUMEFUNNEL) {
+				//WitcheryExtras.log(1, "Found Fume Funnel");
 				if (this.worldObj.getBlockMetadata(x, y, z) == meta) {
 					return FUNNEL_CHANCE;
 				}
 			} 
-			else if (block == Witchery.Blocks.OVEN_FUMEFUNNEL_FILTERED
-					&& this.worldObj.getBlockMetadata(x, y, z) == meta) {
+			else if ((block == Witchery.Blocks.OVEN_FUMEFUNNEL_FILTERED || block == WitcheryExtras.OVEN_FUMEFUNNEL_FILTERED)	&& this.worldObj.getBlockMetadata(x, y, z) == meta) {
 				return Config.instance().doubleFumeFilterChance ? DOUBLED_FILTERED_FUNNEL_CHANCE : FILTERED_FUNNEL_CHANCE;
 			}			
 			return 0.0;
@@ -517,15 +622,25 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			return slot == 3 || slot == 2;
 		}	
 
-		private boolean canSmelt() {
+		private synchronized boolean canSmelt() {
+			
+			if ((this.furnaceItemStacks[SLOT_TO_COOK] != null && this.furnaceItemStacks[SLOT_TO_COOK].stackSize <= 0) ||
+				(this.furnaceItemStacks[SLOT_COOKED] != null && this.furnaceItemStacks[SLOT_COOKED].stackSize >= 64) ||
+				(this.furnaceItemStacks[SLOT_JARS] != null && this.furnaceItemStacks[SLOT_JARS].stackSize <= 0) ||
+				(this.furnaceItemStacks[SLOT_BY_PRODUCT] != null && this.furnaceItemStacks[SLOT_BY_PRODUCT].stackSize >= 64)) {
+				return false;
+			}
+			
 			final OvenRecipes.OvenRecipe recipe = this.getActiveRecipe();
+			
+			
 			if (recipe == null) {
 				return false;
 			}
 			return true && !this.isCooking;
 		}
 
-		public OvenRecipes.OvenRecipe getActiveRecipe() {
+		public synchronized OvenRecipes.OvenRecipe getActiveRecipe() {
 			try {
 				if (this.furnaceItemStacks[SLOT_TO_COOK] == null || this.furnaceItemStacks[SLOT_JARS] == null) {
 					return null;
@@ -534,79 +649,76 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 				return recipe;
 			}
 			catch (Throwable t) {
-				//t.printStackTrace();
 				return null;
 			}
 		}
 
-		public void smeltItem() {
+		protected volatile OvenRecipe mLastRecipe;
+		public synchronized void smeltItem() {
 			if (this.canSmelt() && !isCooking) {
-				final OvenRecipes.OvenRecipe recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);
+				final OvenRecipes.OvenRecipe recipe;
+				if (mLastRecipe != null && OvenRecipes.OvenRecipe.isMatch(mLastRecipe.inputs, this.furnaceItemStacks[SLOT_TO_COOK]) && this.furnaceItemStacks[SLOT_JARS].stackSize >= mLastRecipe.jars) {
+					recipe = mLastRecipe;
+				}
+				else {
+					recipe = OvenRecipes.instance().getOvenResult(this.furnaceItemStacks[SLOT_TO_COOK], this.furnaceItemStacks[SLOT_JARS].stackSize);	
+				}				
 				if (recipe != null) {
+					mLastRecipe = recipe;
 					this.isCooking = true;					
-					if (setInputSlot(recipe.inputs != null ? recipe.inputs : this.furnaceItemStacks[SLOT_TO_COOK]) && setJarInputSlot(OvenRecipes.getEmptyJar(recipe.jars))){
-						if (setOutputSlot(recipe.output) && setJarOutputSlot(recipe.outputJar)) {
-							WitcheryExtras.log(0, "Completed Witches Oven Recipe.");
-							this.isCooking = false;							
+					if (setOutputSlot(recipe.output) && setJarOutputSlot(recipe.outputJar)) {
+						if (setInputSlot(recipe.inputs) && setJarInputSlot(OvenRecipes.getEmptyJar(recipe.jars))){
+							WitcheryExtras.log(1, "Completed Witches Oven Recipe.");
 							if (getFumeFunnels() > 0) {	
-								WitcheryExtras.log(0, "Found "+getFumeFunnels()+" Fume Funnels.");
-								if (MathUtils.randInt(0, 100) <= getFumeFunnelsChance()) {
-									WitcheryExtras.log(0, "Adding extra byproducts.");			
+								WitcheryExtras.log(1, "Found "+getFumeFunnels()+" Fume Funnels. "+getFumeFunnelsChance());
+								if (MathUtils.randDouble(0, 1) <= getFumeFunnelsChance()) {	
 									generateExtraByproducts();
 								}								
 							}
 							else {
-								WitcheryExtras.log(0, "Recipe was invalid.");					
+								WitcheryExtras.log(1, "Recipe was invalid.");					
 							}
-							//Allow another recipe
 						}
 						else {
-							WitcheryExtras.log(0, "Could not add outputs.");					
+							WitcheryExtras.log(1, "Could not add outputs.");					
 						}
 					}
 					else {
-						WitcheryExtras.log(0, "Could not consume inputs.");					
+						WitcheryExtras.log(1, "Could not consume inputs.");					
 					}
+					this.isCooking = false;							
 				}
 				else {
-					WitcheryExtras.log(0, "Recipe was invalid.");					
+					WitcheryExtras.log(1, "Recipe was invalid.");					
 				}
 			}
 		}	
 
 
-		private boolean setInputSlot(ItemStack aStack) {			
-			if (aStack == null) {
-				WitcheryExtras.log(0, "Tried setting null stack in InputSlot.");
-				return false;
-			}					
+		private boolean setInputSlot(ItemStack aStack) {						
 			if (furnaceItemStacks[SLOT_TO_COOK] != null && this.isCooking) {
-				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_TO_COOK])){
-					int size = (furnaceItemStacks[SLOT_TO_COOK].stackSize - aStack.stackSize);
-					if (size <= 64 && size > 0) {
-						furnaceItemStacks[SLOT_TO_COOK].stackSize = size;
-						return true;
-					}
-					else {
-						furnaceItemStacks[SLOT_TO_COOK] = null;
-						return true;
-					}
+				ItemStack slotInput = furnaceItemStacks[SLOT_TO_COOK].copy();
+				slotInput.stackSize--;
+				if (slotInput.stackSize > 0) {
+					furnaceItemStacks[SLOT_TO_COOK] = slotInput;
+					return true;
 				}
-			}
-			else {
-				furnaceItemStacks[SLOT_TO_COOK] = aStack;
-				return true;
+				else {
+					furnaceItemStacks[SLOT_TO_COOK] = null;
+					return true;
+				}
 			}			
 			return false;
 		}
 
-		private boolean setOutputSlot(ItemStack aStack) {			
+		private boolean setOutputSlot(ItemStack rStack) {	
+			ItemStack aStack = rStack.copy();
 			if (aStack == null) {
-				WitcheryExtras.log(0, "Tried setting null stack in OutputSlot.");
+				WitcheryExtras.log(1, "Tried setting null stack in OutputSlot.");
 				return false;
 			}		
 			else {
-				WitcheryExtras.log(0, "Trying to add x"+aStack.stackSize+" "+aStack.getDisplayName()+" to Output Slot.");
+				WitcheryExtras.log(1, "Trying to add x"+aStack.stackSize+" "+aStack.getDisplayName()+" to Output Slot.");
 			}
 			if (furnaceItemStacks[SLOT_COOKED] != null && this.isCooking) {
 				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_COOKED])){
@@ -616,7 +728,7 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 						return true;
 					}
 					else {
-						WitcheryExtras.log(0, "Could not add outputs, stack size would exceed max size. ["+size+"] Slot Size: "+furnaceItemStacks[SLOT_COOKED].stackSize + " | Trying to add " + aStack.stackSize);
+						WitcheryExtras.log(1, "Could not add outputs, stack size would exceed max size. ["+size+"] Slot Size: "+furnaceItemStacks[SLOT_COOKED].stackSize + " | Trying to add " + aStack.stackSize);
 						return false;
 					}
 				}
@@ -625,114 +737,84 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 				furnaceItemStacks[SLOT_COOKED] = aStack;
 				return true;
 			}		
-			WitcheryExtras.log(0, "Bad Output Somehow?. Is Cooking? "+this.isCooking);
 			return false;
 		}
 
 		private boolean setJarInputSlot(ItemStack aStack) {			
-			if (aStack == null) {
-				WitcheryExtras.log(0, "Tried setting null stack in JarInputSlot.");
-				return false;
-			}		
 			if (furnaceItemStacks[SLOT_JARS] != null && this.isCooking) {
-				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_JARS])){
-					int size = (furnaceItemStacks[SLOT_JARS].stackSize - aStack.stackSize);
-					if (size <= 64 && size > 0) {
-						furnaceItemStacks[SLOT_JARS].stackSize = size;
-						return true;
-					}
-					else {
-						furnaceItemStacks[SLOT_JARS] = null;
-						return true;
-					}
+				ItemStack slotInput = furnaceItemStacks[SLOT_JARS].copy();
+				slotInput.stackSize--;
+				if (slotInput.stackSize > 0) {
+					furnaceItemStacks[SLOT_JARS] = slotInput;
+					return true;
 				}
-			}
-			else {
-				furnaceItemStacks[SLOT_JARS] = aStack;
-				return true;
+				else {
+					furnaceItemStacks[SLOT_JARS] = null;
+					return true;
+				}
 			}			
 			return false;
 		}
 
-		private boolean setJarOutputSlot(ItemStack aStack) {			
+		private boolean setJarOutputSlot(ItemStack rStack) {
+			ItemStack aStack = rStack.copy();			
 			if (aStack == null) {
-				WitcheryExtras.log(0, "Tried setting null stack in JarOutputSlot.");
+				WitcheryExtras.log(1, "Tried setting null stack in JarOutputSlot.");
 				return false;
-			}		
-			if (furnaceItemStacks[SLOT_BY_PRODUCT] != null && this.isCooking) {
-				if (OvenRecipes.OvenRecipe.isMatch(aStack, furnaceItemStacks[SLOT_BY_PRODUCT])){
-					int size = (furnaceItemStacks[SLOT_BY_PRODUCT].stackSize + aStack.stackSize);
-					if (size <= 64 && size > 0) {
-						furnaceItemStacks[SLOT_BY_PRODUCT].stackSize = size;
-						return true;
-					}
-					else {
-						WitcheryExtras.log(0, "Could not add Jar outputs, stack size would exceed max size.");
-						return false;
-					}
-				}
-			}
+			}			
 			else {
+				WitcheryExtras.log(1, "Trying to add x"+aStack.stackSize+" "+aStack.getDisplayName()+" to Output Slot.");
+			}			
+			if (furnaceItemStacks[SLOT_BY_PRODUCT] != null && this.isCooking) {
+				int mIncrease = (this.getActiveRecipe() != null ? this.getActiveRecipe().jars : 0);
+				int current = furnaceItemStacks[SLOT_BY_PRODUCT].stackSize;			
+				if (current + mIncrease > 64) {
+					return false;
+				}
+				else {
+					furnaceItemStacks[SLOT_BY_PRODUCT].stackSize = (current + mIncrease);
+					return true;
+				}
+				
+			}
+			else if (furnaceItemStacks[SLOT_BY_PRODUCT] == null && this.isCooking) {
 				furnaceItemStacks[SLOT_BY_PRODUCT] = aStack;
 				return true;
 			}			
-			WitcheryExtras.log(0, "Bad Jar Output Somehow?. Is Cooking? "+this.isCooking);
 			return false;
 		}
 
 		private boolean generateExtraByproducts() {
 			final double BASE_CHANCE = 0.3;
 			final double funnels = this.getFumeFunnelsChance();
-			Random R = new Random();
-			int r1 = R.nextInt(2);
+			int r1 = MathUtils.randInt(0, 2);
 			if (this.worldObj.rand.nextDouble() <= Math.min(BASE_CHANCE + funnels, 1.0)	&& this.furnaceItemStacks[SLOT_JARS] != null) {	
+				WitcheryExtras.log(1, "Trying to add extra byproducts.");		
 				OvenRecipe x = this.getActiveRecipe();
-				if (x != null) {
+				if (x != null) {						
 					if (Utils.hasValidOreDictTag("treeSapling", x.inputs)){
 						if (this.getStackInSlot(SLOT_JARS) != null && this.getStackInSlot(SLOT_JARS).stackSize >= r1) {
+							WitcheryExtras.log(1, "Adding extra byproducts.");		
 							this.setJarOutputSlot(Utils.getSimpleStack(this.getActiveRecipe().outputJar, r1));
 						}
 					}	
+					else if (Utils.hasValidOreDictTag("logWood", x.inputs)){
+						if (this.getStackInSlot(SLOT_JARS) != null && this.getStackInSlot(SLOT_JARS).stackSize >= r1) {
+							WitcheryExtras.log(1, "Adding extra byproducts.");		
+							this.setJarOutputSlot(Utils.getSimpleStack(this.getActiveRecipe().outputJar, r1));
+						}
+					}
 				}
 			}
 			return false;
 		}
-
-
-
-
-
+		
 		static {
 			slots_top = new int[]{0, 4};
 			slots_bottom = new int[]{4, 1};
 			slots_sides = new int[]{3, 2, 4, 1};
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public static class ContainerWitchesOven extends Container {
 		private TileEntityWitchesOvenEx furnace;
