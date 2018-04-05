@@ -115,28 +115,25 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 	}
 
 	private void spawnParticleInWorld(int chance, World world, String particle, double x, double y, double z, double velx, double vely, double velz) {
-		if (MathUtils.randInt(1, 100) <= chance) {
+		if (true) {
 			world.spawnParticle(particle, x, y, z, velx, vely, velz);
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(final World par1World, final int par2, final int par3, final int par4,
 			final Random par5Random) {
 		if (this.isActive) {
-
 			float g1 = MathUtils.randFloat(-0.1f, 0.1f);
-			float g2 = MathUtils.randFloat(-0.2f, 0.2f);
-			float g3 = MathUtils.randFloat(-0.3f, 0.3f);
-			
-			final int l = par1World.getBlockMetadata(par2, par3, par4);		
-			
+			float g2 = MathUtils.randFloat(-1f, -0.2f);
+			float g3 = MathUtils.randFloat(-0.3f, 0.3f);			
+			final int l = par1World.getBlockMetadata(par2, par3, par4);				
 			float x1 = par2;
-			float y1 = (0.4f + par3);
-			float z1 = par3;	
+			float y1 = (g2 + par3);
+			float z1 = par3;
 			
-			
-			if (l == 4) {// -x				
+			/*if (l == 4) {// -x				
 				x1 += 0.82f;
 				y1 += 0.4f;
 				z1 += 0.5f;				
@@ -152,22 +149,26 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 				z1 += -0.82f;
 				y1 += 0.4f + par3;
 				x1 += 0.5f;
-			}
+			}*/
 			
 			//Chimney			
-			spawnParticleInWorld(10, par1World, "lava", (double) x1, (double) y1+0.5, (double) z1, 0.0, 0.15, 0.0);				
-			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.05, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.05, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.09, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.09, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.14, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.19, 0.0);				
+			/*spawnParticleInWorld(1000, par1World, "lava", (double) x1, (double) y1+0.5, (double) z1, 0.0, 0.15, 0.0);				
+			spawnParticleInWorld(100, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.05, 0.0);
+			spawnParticleInWorld(100, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.05, 0.0);
+			spawnParticleInWorld(100, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.09, 0.0);
+			spawnParticleInWorld(100, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.09, 0.0);
+			spawnParticleInWorld(100, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.14, 0.0);
+			spawnParticleInWorld(100, par1World, "smoke", (double) x1, (double) y1+0.7, (double) z1, 0.0, 0.19, 0.0);	*/			
 			
-			
-			spawnParticleInWorld(80, par1World, "flame", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
-			spawnParticleInWorld(80, par1World, "flame", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
-			spawnParticleInWorld(80, par1World, "smoke", (double) par2 + g1, (double) y1+g2, (double) par4 + g3, 0.0, 0.0, 0.0);
+
+			spawnParticleInWorld(25, par1World, "flame", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "flame", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "flame", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "flame", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "smoke", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "smoke", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "smoke", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
+			spawnParticleInWorld(25, par1World, "smoke", (double) par2 + g1, (double) y1, (double) par4 + g3, 0.0, 0.0, 0.0);
 			
 			
 		}
@@ -193,7 +194,6 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 	public void breakBlock(final World par1World, final int par2, final int par3, final int par4, final Block par5,
 			final int par6) {
 		if (!keepFurnaceInventory) {
-			final TileEntity tile = par1World.getTileEntity(par2, par3, par4);
 			final TileEntityWitchesOvenEx tileentityfurnace = (TileEntityWitchesOvenEx) BlockUtil.getTileEntity(par1World, par2, par3, par4, TileEntityWitchesOvenEx.class);
 			if (tileentityfurnace != null) {
 				for (int j1 = 0; j1 < tileentityfurnace.getSizeInventory(); ++j1) {
@@ -425,22 +425,6 @@ public class BlockWitchesOvenEx extends BlockBaseContainer {
 			if (flag2) {
 				this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 			}
-		}	
-
-		private BlockPos getLeftFunnel() {
-			return mCachedFunnels[3];
-		}
-
-		private BlockPos getRightFunnel() {
-			return mCachedFunnels[4];
-		}
-
-		private BlockPos[] getTopFunnels() {
-			BlockPos[] y = new BlockPos[3];
-			for (int i=0;i<3;i++) {
-				y[i] = mCachedFunnels[i];
-			}
-			return y;
 		}
 
 		private synchronized boolean cacheFumeFunnels() {			

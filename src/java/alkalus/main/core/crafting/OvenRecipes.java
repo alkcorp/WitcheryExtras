@@ -147,12 +147,13 @@ public class OvenRecipes {
 			ItemStack s = null;
 			if (w != null && w.length > 0) {				
 				for (int i=0;i<w.length;i++) {
-					ItemStack gh = FurnaceRecipes.smelting().getSmeltingResult(w[i]).copy();
+					ItemStack gh = FurnaceRecipes.smelting().getSmeltingResult(w[i]);
 					if (gh != null) {
+						gh = gh.copy();
 						if (gh.stackSize > 64 || gh.stackSize <= 0) {
 							gh.stackSize = 1;
 						}
-						s = Utils.getSimpleStack(gh, gh.stackSize);
+						s = Utils.getSimpleStack(gh.copy(), gh.stackSize);
 						break;
 					}
 				}				
@@ -312,8 +313,9 @@ public class OvenRecipes {
 			return (this.jars == 0 || ((isMatch(intput1, this.inputs) && amt1 >= this.jars)) || (!this.validOreDictInput.equals("") && Utils.hasValidOreDictTag(this.validOreDictInput, intput1)));
 		}
 		
+		@SuppressWarnings("unused")
 		private boolean isMatch(final ItemStack output1, int amt1, final ItemStack output2, int amt2) {			
-			return (this.jars == 0 || ((amt1 == this.outputAmount1 && amt2 == this.outputAmountJar) && (this.isMatch(output1, this.output) && this.isMatch(output2, outputJar))));
+			return (this.jars == 0 || ((amt1 == this.outputAmount1 && amt2 == this.outputAmountJar) && (OvenRecipe.isMatch(output1, this.output) && OvenRecipe.isMatch(output2, outputJar))));
 		}
 
 		public static boolean isMatch(final ItemStack a, final ItemStack b) {

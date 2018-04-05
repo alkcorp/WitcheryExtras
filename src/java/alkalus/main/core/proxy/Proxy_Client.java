@@ -1,7 +1,6 @@
 package alkalus.main.core.proxy;
 
 import com.emoniph.witchery.client.renderer.RenderBlockItem;
-import com.emoniph.witchery.client.renderer.RenderFumeFunnel;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
