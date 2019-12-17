@@ -36,15 +36,15 @@ import net.minecraft.item.ItemStack;
 
 public class WitcheryRecipeHandlerInternal {
 
-	protected static final Witchery_Cauldron mCauldronHandler = new Witchery_Cauldron();
-	protected static final Witchery_CreaturePower mCreaturePowerHandler = new Witchery_CreaturePower();
-	protected static final Witchery_Distillery mDistilleryHandler = new Witchery_Distillery();
-	protected static final Witchery_Infusion mInfusionHandler = new Witchery_Infusion();
-	protected static final Witchery_Kettle mKettleHandler = new Witchery_Kettle();
-	protected static final Witchery_Oven mOvenHandler = new Witchery_Oven();
-	protected static final Witchery_Predictions mPredictionsHandler = new Witchery_Predictions();
-	protected static final Witchery_Rite mRitesHandler = new Witchery_Rite();
-	protected static final Witchery_SpinningWheel mSpinningWheelHandler = new Witchery_SpinningWheel();
+	public static final Witchery_Cauldron mCauldronHandler = new Witchery_Cauldron();
+	public static final Witchery_CreaturePower mCreaturePowerHandler = new Witchery_CreaturePower();
+	public static final Witchery_Distillery mDistilleryHandler = new Witchery_Distillery();
+	public static final Witchery_Infusion mInfusionHandler = new Witchery_Infusion();
+	public static final Witchery_Kettle mKettleHandler = new Witchery_Kettle();
+	public static final Witchery_Oven mOvenHandler = new Witchery_Oven();
+	public static final Witchery_Predictions mPredictionsHandler = new Witchery_Predictions();
+	public static final Witchery_Rite mRitesHandler = new Witchery_Rite();
+	public static final Witchery_SpinningWheel mSpinningWheelHandler = new Witchery_SpinningWheel();
 
 
 
@@ -241,7 +241,7 @@ public class WitcheryRecipeHandlerInternal {
 		int aSizeStart = predictions.size();
 		for (Prediction aPredic : predictions.values()) {
 			if (aPredic != null && aPredic.predictionID == prediction.predictionID) {
-				predictions.remove(aPredic);
+				predictions.remove(prediction.predictionID);
 				WitcheryExtras.log(0, "Removed Prediction: "+aPredic.getTranslationKey()+" | "+aPredic.predictionID);
 				break;
 			}

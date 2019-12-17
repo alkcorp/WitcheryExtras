@@ -18,20 +18,24 @@ public class Logger {
 	}
 
 	public void INFO(final String s) {
-		modLogger.info(s);
+		modLogger.info("[Witchery++] "+s);
 	}
 
 	public void WARNING(final String s) {
-			modLogger.warn(s);
+		modLogger.warn("[Witchery++] "+s);
 	}
 
 	public void ERROR(final String s) {
-			modLogger.fatal(s);
-		
+		modLogger.fatal("[Witchery++] "+s);
+
 	}
 
 	public static void REFLECTION(String string) {
-		modLogger.info("[Reflection] "+string);		
+		modLogger.info("[Witchery++]"+"[Reflection] "+string);		
+	}
+	
+	public static void ASM(String string) {
+		modLogger.info("[Witchery++]"+"[ASM] "+string);		
 	}
 
 }

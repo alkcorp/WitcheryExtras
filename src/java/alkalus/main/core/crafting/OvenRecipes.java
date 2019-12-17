@@ -1,21 +1,16 @@
 package alkalus.main.core.crafting;
 
+import java.util.ArrayList;
+
+import com.emoniph.witchery.Witchery;
+
 import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.util.AutoMap;
 import alkalus.main.core.util.Pair;
 import alkalus.main.core.util.Utils;
-
-import com.emoniph.witchery.Witchery;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-
-import java.util.ArrayList;
 
 public class OvenRecipes {
 	private static final OvenRecipes INSTANCE;
@@ -28,25 +23,25 @@ public class OvenRecipes {
 	public void generateDefaultOvenRecipes() {	
 		
 		//Remove recipe for the old Witches Oven
-		Utils.removeAllCraftingRecipesByOutputItem(Utils.simpleMetaStack(Witchery.Blocks.OVEN_IDLE, 0, 1));
-		GameRegistry.addShapedRecipe(Utils.simpleMetaStack(WitcheryExtras.OVEN_IDLE, 0, 1), new Object[] { " s ", "ibi", "isi", Character.valueOf('s'), new ItemStack(Blocks.iron_bars), Character.valueOf('b'), new ItemStack(Blocks.furnace), Character.valueOf('i'), new ItemStack(Items.iron_ingot) });
+		//Utils.removeAllCraftingRecipesByOutputItem(Utils.simpleMetaStack(Witchery.Blocks.OVEN_IDLE, 0, 1));
+		//GameRegistry.addShapedRecipe(Utils.simpleMetaStack(WitcheryExtras.OVEN_IDLE, 0, 1), new Object[] { " s ", "ibi", "isi", Character.valueOf('s'), new ItemStack(Blocks.iron_bars), Character.valueOf('b'), new ItemStack(Blocks.furnace), Character.valueOf('i'), new ItemStack(Items.iron_ingot) });
 		
 		//Vanilla Saplings
-		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(1)); //Oak - 0
-		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Spruce - 1
-		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Birch - 2
-		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 3, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemFoulFume.createStack(1)); //Jungle - 3
-		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 4, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Acacia - 4
-		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 5, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Dark Oak - 5
+		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(1)); //Oak - 0
+		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Spruce - 1
+		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Birch - 2
+		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 3, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemFoulFume.createStack(1)); //Jungle - 3
+		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 4, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Acacia - 4
+		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 5, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Dark Oak - 5
 		
 		//Witchery Saplings
-		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1));
-		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(1));
-		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemOdourOfPurity.createStack(1));
+		//addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1));
+		//addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(1));
+		//addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemOdourOfPurity.createStack(1));
 		
 		//Raw Materials
-		addRecipe("logWood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
-		addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
+		//addRecipe("logWood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
+		//addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
 		
 	}	
 

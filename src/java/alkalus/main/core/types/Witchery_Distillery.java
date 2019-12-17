@@ -1,5 +1,8 @@
 package alkalus.main.core.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.emoniph.witchery.crafting.DistilleryRecipes;
 import com.emoniph.witchery.crafting.DistilleryRecipes.DistilleryRecipe;
 
@@ -14,6 +17,16 @@ public class Witchery_Distillery {
 	public static synchronized DistilleryRecipe findRecipeFor(ItemStack result){
 		return DistilleryRecipes.instance().findRecipeFor(result);
 	}
+	
+    public static synchronized List<DistilleryRecipes.DistilleryRecipe> findRecipesFor(ItemStack result) {
+        List<DistilleryRecipes.DistilleryRecipe> recipes = new ArrayList<>();
+        for (DistilleryRecipes.DistilleryRecipe recipe : DistilleryRecipes.instance().recipes) {
+            if (recipe.resultsIn(result)) {
+                recipes.add(recipe);
+            }
+        }
+        return recipes;
+    }
 
 	public static synchronized DistilleryRecipe findRecipeUsing(ItemStack ingredient){
 		return DistilleryRecipes.instance().findRecipeUsing(ingredient);
