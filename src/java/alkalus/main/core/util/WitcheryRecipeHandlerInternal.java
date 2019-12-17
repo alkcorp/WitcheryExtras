@@ -1,24 +1,52 @@
 package alkalus.main.core.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Hashtable;
+import java.util.List;
 
 import com.emoniph.witchery.crafting.DistilleryRecipes;
 import com.emoniph.witchery.crafting.DistilleryRecipes.DistilleryRecipe;
 import com.emoniph.witchery.crafting.KettleRecipes;
+import com.emoniph.witchery.crafting.SpinningRecipes;
 import com.emoniph.witchery.crafting.KettleRecipes.KettleRecipe;
+import com.emoniph.witchery.crafting.SpinningRecipes.SpinningRecipe;
 import com.emoniph.witchery.infusion.Infusion;
 import com.emoniph.witchery.infusion.infusions.creature.CreaturePower;
 import com.emoniph.witchery.predictions.Prediction;
 import com.emoniph.witchery.predictions.PredictionManager;
-import com.emoniph.witchery.ritual.*;
+import com.emoniph.witchery.ritual.Circle;
+import com.emoniph.witchery.ritual.Rite;
+import com.emoniph.witchery.ritual.RiteRegistry;
 import com.emoniph.witchery.ritual.RiteRegistry.Ritual;
-
-import net.minecraft.item.ItemStack;
+import com.emoniph.witchery.ritual.RitualTraits;
+import com.emoniph.witchery.ritual.Sacrifice;
 
 import alkalus.main.core.WitcheryExtras;
+import alkalus.main.core.types.Witchery_Cauldron;
+import alkalus.main.core.types.Witchery_CreaturePower;
+import alkalus.main.core.types.Witchery_Distillery;
+import alkalus.main.core.types.Witchery_Infusion;
+import alkalus.main.core.types.Witchery_Kettle;
+import alkalus.main.core.types.Witchery_Oven;
+import alkalus.main.core.types.Witchery_Predictions;
+import alkalus.main.core.types.Witchery_Rite;
+import alkalus.main.core.types.Witchery_SpinningWheel;
+import net.minecraft.item.ItemStack;
 
 public class WitcheryRecipeHandlerInternal {
 
+	protected static final Witchery_Cauldron mCauldronHandler = new Witchery_Cauldron();
+	protected static final Witchery_CreaturePower mCreaturePowerHandler = new Witchery_CreaturePower();
+	protected static final Witchery_Distillery mDistilleryHandler = new Witchery_Distillery();
+	protected static final Witchery_Infusion mInfusionHandler = new Witchery_Infusion();
+	protected static final Witchery_Kettle mKettleHandler = new Witchery_Kettle();
+	protected static final Witchery_Oven mOvenHandler = new Witchery_Oven();
+	protected static final Witchery_Predictions mPredictionsHandler = new Witchery_Predictions();
+	protected static final Witchery_Rite mRitesHandler = new Witchery_Rite();
+	protected static final Witchery_SpinningWheel mSpinningWheelHandler = new Witchery_SpinningWheel();
+	
+	
 	public static synchronized boolean addDistilleryRecipe(ItemStack input1, ItemStack input2, int jars, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4) {
 		if (DistilleryRecipes.instance().addRecipe(input1, input2, jars, output1, output2, output3, output4) != null) {
 			return true;
@@ -306,5 +334,31 @@ public class WitcheryRecipeHandlerInternal {
 		WitcheryExtras.log(1, "Failed to remove Infusion: "+(toRemove != null ? toRemove.toString()+" | "+toRemove.infusionID+" | " : infusion.infusionID));
 		return false;
 	}
-
+	
+	public static synchronized boolean addSpinningWheelRecipe(ItemStack result, ItemStack fibre, ItemStack... modifiers) {
+		if (result == null || fibre == null) {
+			return false;
+		}		
+		SpinningRecipes.instance().addRecipe(result, fibre, modifiers);
+		return true;
+	}
+	
+	public boolean removeSpinningWheelRecipe(ItemStack result, ItemStack fibre, ItemStack... modifiers) {
+		SpinningRecipe aRecipeToRemove = null;
+		for (SpinningRecipe aRecipe : SpinningRecipes.instance().recipes) {
+			if (Utils.areStacksEqual(fibre, aRecipe.fibre)) {
+				if (Utils.areStacksEqual(result, aRecipe.result)) {
+					if (modifiers.length > 0 && aRecipe.modifiers.length > 0 && modifiers.length == aRecipe.modifiers.length) {
+						aRecipeToRemove = aRecipe;
+						break;
+					}					
+				}	
+			}
+		}		
+		if (aRecipeToRemove != null) {
+			return SpinningRecipes.instance().recipes.remove(aRecipeToRemove);
+		}
+		return false;		
+	}
+	
 }

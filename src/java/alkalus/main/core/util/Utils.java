@@ -4,17 +4,21 @@ import java.util.HashSet;
 import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class Utils {	
+public class Utils {
+
+    /**
+     * The Item WildCard Tag. Even shorter than the "-1" of the past
+     */
+    public static final short W = OreDictionary.WILDCARD_VALUE;
 
 	public synchronized static ItemStack getSimpleStack(final Item x, final int i){
 		return getSimpleStack(new ItemStack(x), i);
@@ -111,4 +115,12 @@ public class Utils {
 		return simpleMetaStack(Item.getItemFromBlock(block), meta, size);
 	}
 
+    public static boolean areStacksEqual(ItemStack aStack1, ItemStack aStack2) {
+        return areStacksEqual(aStack1, aStack2, false);
+    }
+
+    public static boolean areStacksEqual(ItemStack aStack1, ItemStack aStack2, boolean aIgnoreNBT) {
+        return aStack1 != null && aStack2 != null && aStack1.getItem() == aStack2.getItem() && (aIgnoreNBT || ((aStack1.getTagCompound() == null) == (aStack2.getTagCompound() == null)) && (aStack1.getTagCompound() == null || aStack1.getTagCompound().equals(aStack2.getTagCompound()))) && (Items.feather.getDamage(aStack1) == Items.feather.getDamage(aStack2) || Items.feather.getDamage(aStack1) == W || Items.feather.getDamage(aStack2) == W);
+    }
+	
 }
