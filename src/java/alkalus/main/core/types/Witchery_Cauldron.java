@@ -1,9 +1,10 @@
 package alkalus.main.core.types;
 
-import java.lang.reflect.Field;
 import java.util.Hashtable;
 import java.util.List;
 
+import com.emoniph.witchery.brewing.BrewItemKey;
+import com.emoniph.witchery.brewing.WitcheryBrewRegistry;
 import com.emoniph.witchery.brewing.action.BrewAction;
 import com.emoniph.witchery.brewing.action.BrewActionRitualRecipe;
 import com.emoniph.witchery.crafting.DistilleryRecipes;
@@ -14,35 +15,57 @@ import net.minecraft.item.ItemStack;
 
 public class Witchery_Cauldron {
 
-	private static final Class mBrewingRegistryClass;
-	private static final Field mBrewingRegistryInstanceField;
+    public static List<BrewActionRitualRecipe> getRecipes() {
+        return WitcheryBrewRegistry.INSTANCE.getRecipes();
+    }
+    
+    public static Hashtable<BrewItemKey, BrewAction> getIngredients() {
+    	return (Hashtable<BrewItemKey, BrewAction>) ReflectionUtils.getFieldValue(ReflectionUtils.getField(WitcheryBrewRegistry.class, "ingredients"), WitcheryBrewRegistry.INSTANCE);
+    }
+    
+    public BrewAction getActionForItemStack(final ItemStack stack) {
+        return getIngredients().get(BrewItemKey.fromStack(stack));
+    }    
+    
+
+    private boolean removeCauldronBrewAction(final ItemStack ingredient) {
+    	return removeCauldronBrewAction(getActionForItemStack(ingredient));
+    }
+    
+    
+    private boolean removeCauldronBrewAction(final BrewAction ingredient) {
+		// Bad Recipe to remove
+    	if (ingredient == null || ingredient.ITEM_KEY == null) {
+    		return false;
+    	}  	
+        if (getIngredients().containsKey(ingredient.ITEM_KEY)) {
+        	if (getIngredients().remove(ingredient.ITEM_KEY) != null) {
+        		return true;
+        	}
+        }
+        return false;
+    }
 	
-	private static final Object mBrewingRegistryInstance;
+    public static synchronized BrewActionRitualRecipe findRecipeForOutput(ItemStack aOutput) {
+    	for (BrewActionRitualRecipe aRecipe : getRecipes()) {
+    		if (aRecipe != null) {
+    			
+    		}
+    	}
+    	
+    	
+    	return null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	
-	private final static Hashtable mBrewingIngredients;
-	
-	static {
-		mBrewingRegistryClass = ReflectionUtils.getClass("com.emoniph.witchery.brewing.WitcheryBrewRegistry");
-		mBrewingRegistryInstanceField = ReflectionUtils.getField(mBrewingRegistryClass, "INSTANCE");		
-		mBrewingRegistryInstance = ReflectionUtils.getFieldValue(mBrewingRegistryInstanceField);
-		Field aBrewingIngrediants = ReflectionUtils.getField(mBrewingRegistryClass, "ingredients");
-		mBrewingIngredients = (Hashtable) ReflectionUtils.getFieldValue(aBrewingIngrediants, mBrewingRegistryInstance);
-	}
-	
-	public static List<BrewActionRitualRecipe> getBrewingRecipes() {
-		return (List<BrewActionRitualRecipe>) ReflectionUtils.invokeNonVoid(mBrewingRegistryInstance, ReflectionUtils.getMethod(mBrewingRegistryClass, "getBrewingRecipes", new Class[] {}));
-	}
-	
-	private BrewAction removeBrewingRecipe(BrewAction ingredient) {
-		if (!Witchery_Cauldron.mBrewingIngredients.containsKey(ingredient.ITEM_KEY)) {
-			Witchery_Cauldron.mBrewingIngredients.put(ingredient.ITEM_KEY, ingredient);
-			Class c = ReflectionUtils.getClass("com.emoniph.witchery.brewing.action.BrewActionRitualRecipe");
-			if (c.isInstance(ingredient)) {
-				getBrewingRecipes().add((BrewActionRitualRecipe) ingredient);
-			}
-		}
-		return ingredient;
-	}
 	
 	public static synchronized DistilleryRecipe getDistillingResult(ItemStack input1, ItemStack intput2, ItemStack jars){
 		return DistilleryRecipes.instance().getDistillingResult(input1, intput2, jars);
