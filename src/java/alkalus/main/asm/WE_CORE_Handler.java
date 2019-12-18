@@ -3,6 +3,7 @@ package alkalus.main.asm;
 import java.io.File;
 import java.io.IOException;
 
+import alkalus.main.asm.transformer.ClassTransformer_Witchery_NEIWitcheryConfig;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesOven;
 import alkalus.main.core.util.Logger;
 import cpw.mods.fml.relauncher.CoreModManager;
@@ -55,11 +56,8 @@ public class WE_CORE_Handler implements IClassTransformer {
 
 		// Fix Bad NEI Handling, by patching it out entirely.
 		if (transformedName.equals("com.emoniph.witchery.integration.NEIWitcheryConfig") && mConfig.enablePatchNEI) {
-			return AsmUtils.getClassBytes("alkalus.main.asm.AsmConfig.BlankClassData");
-		}		
-		
-		if (transformedName.contains("com.emoniph.witchery.blocks.BlockWitchesOven")) {
-			Logger.ASM("Found class string: "+transformedName);
+			return new ClassTransformer_Witchery_NEIWitcheryConfig(transformedName, basicClass, obfuscated).getWriter().toByteArray();
+			//return AsmUtils.getClassBytes("com.emoniph.witchery.integration.NEIWitcheryConfig");
 		}
 		
 		// Patch witches oven to support recipe maps.

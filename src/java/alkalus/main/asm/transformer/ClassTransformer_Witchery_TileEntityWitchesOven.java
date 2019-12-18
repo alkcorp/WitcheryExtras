@@ -317,7 +317,7 @@ public class ClassTransformer_Witchery_TileEntityWitchesOven extends BaseTransfo
 
 	@Override
 	public String getTransformerName() {
-		return "Witchery++ Witches Oven Fix";
+		return "Witches Oven Fix";
 	}
 
 	@Override

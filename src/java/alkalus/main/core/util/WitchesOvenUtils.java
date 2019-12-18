@@ -50,7 +50,6 @@ public class WitchesOvenUtils {
     public static void updateEntity(TileEntityWitchesOven aTile) {
         final boolean flag = aTile.furnaceBurnTime > 0;
         boolean flag2 = false;
-        Logger.ASM("Test");
         if (aTile.furnaceBurnTime > 0) {
             --aTile.furnaceBurnTime;
         }
