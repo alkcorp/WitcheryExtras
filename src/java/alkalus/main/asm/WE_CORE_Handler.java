@@ -3,6 +3,8 @@ package alkalus.main.asm;
 import java.io.File;
 import java.io.IOException;
 
+import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesOven;
+import alkalus.main.core.util.Logger;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -51,12 +53,19 @@ public class WE_CORE_Handler implements IClassTransformer {
 		// Is this environment obfuscated? (Extra checks just in case some weird shit happens during the check)
 		boolean obfuscated = checkObfuscated();
 
-		// Fix Bad NEI Handling
-		if (transformedName.equals("com.emoniph.witchery.integration.NEIWitcheryConfig") && mConfig.enablePatchNEI) {	
-			//FMLRelaunchLog.log("[GT++ ASM] LWJGL Keybinding index out of bounds fix", Level.INFO, "Transforming %s", transformedName);
-			//return new ClassTransformer_Witchery_NEIWitcheryConfig(basicClass).getWriter().toByteArray();
+		// Fix Bad NEI Handling, by patching it out entirely.
+		if (transformedName.equals("com.emoniph.witchery.integration.NEIWitcheryConfig") && mConfig.enablePatchNEI) {
 			return AsmUtils.getClassBytes("alkalus.main.asm.AsmConfig.BlankClassData");
 		}		
+		
+		if (transformedName.contains("com.emoniph.witchery.blocks.BlockWitchesOven")) {
+			Logger.ASM("Found class string: "+transformedName);
+		}
+		
+		// Patch witches oven to support recipe maps.
+		if (transformedName.equals("com.emoniph.witchery.blocks.BlockWitchesOven$TileEntityWitchesOven")) {
+			return new ClassTransformer_Witchery_TileEntityWitchesOven(transformedName, basicClass, obfuscated).getWriter().toByteArray();
+		}	
 		
 		return basicClass;
 	}

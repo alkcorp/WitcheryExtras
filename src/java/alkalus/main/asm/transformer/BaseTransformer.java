@@ -12,28 +12,41 @@ import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public abstract class BaseTransformer {
 
-	private final boolean isValid;
+	protected final boolean mObf;
+	protected boolean isValid = false;
 	private final ClassReader reader;
 	private final ClassWriter writer;
 
-	public BaseTransformer(byte[] basicClass) {
+	public BaseTransformer(String transformedName, byte[] basicClass, boolean isObf) {
 		ClassReader aTempReader = null;
 		ClassWriter aTempWriter = null;
+		mObf = isObf;
+		log("Transforming "+transformedName);
 		aTempReader = new ClassReader(basicClass);
 		aTempWriter = new ClassWriter(aTempReader, ClassWriter.COMPUTE_FRAMES);
-		aTempReader.accept(new MethodAdaptor(aTempWriter), 0);
-		for (String methodName : getMethodNamesToStrip()) {
-			injectMethod(methodName, aTempWriter);			
+		reader = aTempReader;
+		writer = aTempWriter;
+	}
+	
+	protected final void init() {
+		reader.accept(new MethodAdaptor(writer), 0);
+		if (runInjectorMultipleTimes()) {
+			for (String methodName : getMethodNamesToStrip()) {
+				injectMethod(methodName, writer);			
+			}
 		}
-		if (aTempReader != null && aTempWriter != null) {
+		else {
+			injectMethod("NONE", writer);			
+		}		
+		if (reader != null && writer != null) {
 			isValid = true;
 		} else {
 			isValid = false;
 		}
-		log("Valid? " + isValid + ".");
-		reader = aTempReader;
-		writer = aTempWriter;
+		log("Valid? " + isValid + ".");		
 	}
+	
+	protected abstract boolean runInjectorMultipleTimes();
 
 	public final boolean isValidTransformer() {
 		return isValid;
@@ -55,7 +68,7 @@ public abstract class BaseTransformer {
 	
 	public abstract String getTransformerName();
 
-	private void log(String s) {
+	protected void log(String s) {
 		FMLRelaunchLog.log("[Witchery++ ASM] "+getTransformerName(), Level.INFO, s);
 	}
 	
