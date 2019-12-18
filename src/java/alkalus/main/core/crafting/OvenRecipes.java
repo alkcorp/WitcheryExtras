@@ -8,41 +8,44 @@ import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.util.AutoMap;
 import alkalus.main.core.util.Pair;
 import alkalus.main.core.util.Utils;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
 public class OvenRecipes {
-	private static final OvenRecipes INSTANCE;
-	public final ArrayList<OvenRecipe> recipes;
-
-	public static OvenRecipes instance() {
-		return OvenRecipes.INSTANCE;
-	}
 	
-	public void generateDefaultOvenRecipes() {	
+	private static final ArrayList<OvenRecipe> mRecipeMap = new ArrayList<OvenRecipe>();
+	
+	public static final ArrayList<OvenRecipe> getRecipeMap() {
+		return mRecipeMap;
+	}
+
+	public static void generateDefaultOvenRecipes() {	
 		
 		//Remove recipe for the old Witches Oven
 		//Utils.removeAllCraftingRecipesByOutputItem(Utils.simpleMetaStack(Witchery.Blocks.OVEN_IDLE, 0, 1));
 		//GameRegistry.addShapedRecipe(Utils.simpleMetaStack(WitcheryExtras.OVEN_IDLE, 0, 1), new Object[] { " s ", "ibi", "isi", Character.valueOf('s'), new ItemStack(Blocks.iron_bars), Character.valueOf('b'), new ItemStack(Blocks.furnace), Character.valueOf('i'), new ItemStack(Items.iron_ingot) });
 		
 		//Vanilla Saplings
-		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(1)); //Oak - 0
-		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Spruce - 1
-		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Birch - 2
-		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 3, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemFoulFume.createStack(1)); //Jungle - 3
-		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 4, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Acacia - 4
-		//addRecipe(Utils.simpleMetaStack(Blocks.sapling, 5, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Dark Oak - 5
+		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(1)); //Oak - 0
+		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Spruce - 1
+		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Birch - 2
+		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 3, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemFoulFume.createStack(1)); //Jungle - 3
+		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 4, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1)); //Acacia - 4
+		addRecipe(Utils.simpleMetaStack(Blocks.sapling, 5, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack(1)); //Dark Oak - 5
 		
 		//Witchery Saplings
-		//addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1));
-		//addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(1));
-		//addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemOdourOfPurity.createStack(1));
+		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 0, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1));
+		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 1, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack(1));
+		addRecipe(Utils.simpleMetaStack(Witchery.Blocks.SAPLING, 2, 1), 1, Witchery.Items.GENERIC.itemAshWood.createStack(1), Witchery.Items.GENERIC.itemOdourOfPurity.createStack(1));
 		
 		//Raw Materials
-		//addRecipe("logWood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
-		//addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
+		addRecipe("logWood", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
+		addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
 		
+		//Test
+		addRecipe(Utils.simpleMetaStack(Blocks.diamond_ore, 0, 1), 1, Witchery.Items.GENERIC.itemCreeperHeart.createStack(1), Witchery.Items.GENERIC.itemRedstoneSoup.createStack(1)); //Dark Oak - 5
 	}	
 
 	private final static ItemStack createStack(final int stackSize) {
@@ -58,7 +61,7 @@ public class OvenRecipes {
 	}
 
 	private OvenRecipes() {
-		this.recipes = new ArrayList<OvenRecipe>();
+		
 	}
 
 	/** @param input1 - The Input Item.
@@ -67,7 +70,7 @@ public class OvenRecipes {
 	 * @param outputAmount - Amount of outputs, output item is based on furnace recipe of input item.
 	 * @return - A new {@link OverRecipe} object.
 	 */
-	public OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack jarOutput) {
+	public static OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack jarOutput) {
 		return addRecipe(input1, "", jars, null, 0, jarOutput, jars);
 	}
 	
@@ -78,7 +81,7 @@ public class OvenRecipes {
 	 * @param outputAmount - Amount of outputs, output item is based on furnace recipe of input item.
 	 * @return - A new {@link OverRecipe} object.
 	 */
-	public OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack customOutput, final ItemStack jarOutput) {
+	public static OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack customOutput, final ItemStack jarOutput) {
 		return addRecipe(input1, "", jars, customOutput, customOutput.stackSize, jarOutput, jars);
 	}
 	
@@ -88,7 +91,7 @@ public class OvenRecipes {
 	 * @param outputAmount - Amount of outputs, output item is based on furnace recipe of input item.
 	 * @return - A new {@link OverRecipe} object.
 	 */
-	public OvenRecipe addRecipe(final String input1, final int jars, final ItemStack jarOutput) {
+	public static OvenRecipe addRecipe(final String input1, final int jars, final ItemStack jarOutput) {
 		return addRecipe(null, input1, jars, null, 0, jarOutput, jars);
 	}
 	
@@ -98,11 +101,11 @@ public class OvenRecipes {
 	 * @param output2 - The type of Jar output.
 	 * @return - A new {@link OverRecipe} object.
 	 */
-	public OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack output0, int amt0, final ItemStack output1, final int amt1) {
+	public static OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack output0, int amt0, final ItemStack output1, final int amt1) {
 		return addRecipe(input1, "", jars, output0, amt0, output1, amt1);
 	}
 	
-	public OvenRecipe addRecipe(
+	public static OvenRecipe addRecipe(
 			final ItemStack input1, final String inputString1, final int jars,
 			final ItemStack customOutput, final int amt1, final ItemStack outputJarStack, final int amt2) {
 		
@@ -184,7 +187,7 @@ public class OvenRecipes {
 			else {
 				recipe = new OvenRecipe(mInputString, mJars, mOutputStack.copy(), mOutputAmount, mJarOutputStack.copy(), mJarOutputAmount);
 			}			
-			this.recipes.add(recipe);
+			mRecipeMap.add(recipe);
 			WitcheryExtras.log(0, "Added an Oven Recipe" + recipe.getDescription());
 			return recipe;
 		}
@@ -204,8 +207,8 @@ public class OvenRecipes {
 	 * @param jars - Amount of Jars
 	 * @return - The Closest Matching {@link OverRecipe}.
 	 */
-	public OvenRecipe getOvenResult(final ItemStack input1, final int jars) {
-		for (final OvenRecipe recipe : this.recipes) {
+	public static OvenRecipe getOvenResult(final ItemStack input1, final int jars) {
+		for (final OvenRecipe recipe : mRecipeMap) {
 			if (recipe.isInputMatch(input1, jars)) {
 				return recipe;
 			}
@@ -218,8 +221,8 @@ public class OvenRecipes {
 	 * @param result - The output item.
 	 * @return - The first Matching {@link OverRecipe}.
 	 */
-	public OvenRecipe findRecipeFor(final ItemStack result) {
-		for (final OvenRecipe recipe : this.recipes) {
+	public static OvenRecipe findRecipeFor(final ItemStack result) {
+		for (final OvenRecipe recipe : mRecipeMap) {
 			if (recipe.resultsIn(result)) {
 				return recipe;
 			}
@@ -232,16 +235,12 @@ public class OvenRecipes {
 	 * @return - The first Matching {@link OverRecipe}.
 	 */
 	public OvenRecipe findRecipeUsing(final ItemStack ingredient) {
-		for (final OvenRecipe recipe : this.recipes) {
+		for (final OvenRecipe recipe : this.mRecipeMap) {
 			if (recipe.uses(ingredient)) {
 				return recipe;
 			}
 		}
 		return null;
-	}
-
-	static {
-		INSTANCE = new OvenRecipes();
 	}
 
 	public static class OvenRecipe {
@@ -368,6 +367,10 @@ public class OvenRecipes {
 				return true;
 			}
 			return Witchery.Items.GENERIC.itemEmptyClayJar.isMatch(ingredient) && this.jars > 0;
+		}
+
+		public boolean isValid() {
+			return inputs != null && output != null;
 		}
 	}
 	

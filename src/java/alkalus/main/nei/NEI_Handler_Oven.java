@@ -5,25 +5,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.emoniph.witchery.Witchery;
 import com.emoniph.witchery.blocks.BlockWitchesOvenGUI;
 
+import alkalus.main.core.crafting.OvenRecipes;
+import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
+import alkalus.main.core.util.Utils;
 import codechicken.nei.ItemList;
-import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.StatCollector;
 
@@ -42,83 +40,47 @@ public class NEI_Handler_Oven extends TemplateRecipeHandler
     
     public void loadCraftingRecipes(final String outputId, final Object... results) {
         if (outputId.equals("witchery_cooking") && this.getClass() == NEI_Handler_Oven.class) {
-            final Map<ItemStack, ItemStack> recipes = (Map<ItemStack, ItemStack>)FurnaceRecipes.smelting().getSmeltingList();
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 0), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 1), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemHintOfRebirth.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 2), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 3), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemFoulFume.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 0), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 1), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 2), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemOdourOfPurity.createStack()));
-            for (final Map.Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
-                final ItemStack result = recipe.getValue();
-                final ItemStack ingred = new ItemStack(recipe.getKey().getItem(), 1, -1);
-                ItemStack byproduct = Witchery.Items.GENERIC.itemFoulFume.createStack();
-                if (ingred.getItem() == Item.getItemFromBlock(Blocks.sapling)) {
-                    byproduct = ((ingred.getItemDamage() == 0) ? Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack() : ((ingred.getItemDamage() == 2) ? Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack() : ((ingred.getItemDamage() == 1) ? Witchery.Items.GENERIC.itemHintOfRebirth.createStack() : Witchery.Items.GENERIC.itemFoulFume.createStack())));
-                    this.arecipes.add(new SmeltingPair(ingred, result, byproduct));
-                }
-                else if (ingred.getItem() == Item.getItemFromBlock(Witchery.Blocks.SAPLING)) {
-                    byproduct = ((ingred.getItemDamage() == 0) ? Witchery.Items.GENERIC.itemWhiffOfMagic.createStack() : ((ingred.getItemDamage() == 2) ? Witchery.Items.GENERIC.itemOdourOfPurity.createStack() : ((ingred.getItemDamage() == 1) ? Witchery.Items.GENERIC.itemReekOfMisfortune.createStack() : Witchery.Items.GENERIC.itemFoulFume.createStack())));
-                    this.arecipes.add(new SmeltingPair(ingred, result, byproduct));
-                }
-                else {
-                    if (!Witchery.Items.GENERIC.itemAshWood.isMatch(result) && (result.getItem() != Items.coal || result.getItemDamage() != 1) && !(ingred.getItem() instanceof ItemFood)) {
-                        continue;
-                    }
-                    this.arecipes.add(new SmeltingPair(ingred, result, byproduct));
-                }
-            }
+        	
+    			final List<OvenRecipe> recipes = OvenRecipes.getRecipeMap();
+    			for (final OvenRecipe recipe : recipes) {
+    				if (recipe.isValid()) {
+    					final ItemStack input = recipe.inputs.copy();
+    					final ItemStack output = recipe.output.copy();
+    					final ItemStack outputJar = recipe.outputJar.copy();
+    					final SmeltingPair rec = new SmeltingPair(
+    							input,
+    							output,
+    							outputJar);
+    					this.arecipes.add(rec);
+    				}
+    			}
+        	
         }
         else {
             super.loadCraftingRecipes(outputId, results);
         }
     }
     
-    public void loadCraftingRecipes(final ItemStack result2) {
-        final Map<ItemStack, ItemStack> recipes = (Map<ItemStack, ItemStack>)FurnaceRecipes.smelting().getSmeltingList();
-        for (final Map.Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
-            final ItemStack result3 = recipe.getKey();
-            if (NEIServerUtils.areStacksSameType(result3, result2)) {
-                final ItemStack ingred = new ItemStack(recipe.getValue().getItem(), 1, -1);
-                ItemStack byproduct = Witchery.Items.GENERIC.itemFoulFume.createStack();
-                if (ingred.getItem() == Item.getItemFromBlock(Blocks.sapling)) {
-                    byproduct = ((ingred.getItemDamage() == 0) ? Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack() : ((ingred.getItemDamage() == 2) ? Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack() : ((ingred.getItemDamage() == 1) ? Witchery.Items.GENERIC.itemHintOfRebirth.createStack() : Witchery.Items.GENERIC.itemFoulFume.createStack())));
-                    this.arecipes.add(new SmeltingPair(ingred, result3, byproduct));
-                }
-                else if (ingred.getItem() == Item.getItemFromBlock(Witchery.Blocks.SAPLING)) {
-                    byproduct = ((ingred.getItemDamage() == 0) ? Witchery.Items.GENERIC.itemWhiffOfMagic.createStack() : ((ingred.getItemDamage() == 2) ? Witchery.Items.GENERIC.itemOdourOfPurity.createStack() : ((ingred.getItemDamage() == 1) ? Witchery.Items.GENERIC.itemReekOfMisfortune.createStack() : Witchery.Items.GENERIC.itemFoulFume.createStack())));
-                    this.arecipes.add(new SmeltingPair(ingred, result3, byproduct));
-                }
-                else {
-                    if (!Witchery.Items.GENERIC.itemAshWood.isMatch(result3) && ingred.getItem() != Items.coal && !(ingred.getItem() instanceof ItemFood)) {
-                        continue;
-                    }
-                    this.arecipes.add(new SmeltingPair(ingred, result3, byproduct));
-                }
-            }
-        }
-        if (Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 0), Witchery.Items.GENERIC.itemAshWood.createStack(), result2));
-        }
-        else if (Witchery.Items.GENERIC.itemBreathOfTheGoddess.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 2), Witchery.Items.GENERIC.itemAshWood.createStack(), result2));
-        }
-        else if (Witchery.Items.GENERIC.itemHintOfRebirth.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 1), Witchery.Items.GENERIC.itemAshWood.createStack(), result2));
-        }
-        else if (Witchery.Items.GENERIC.itemWhiffOfMagic.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 0), Witchery.Items.GENERIC.itemAshWood.createStack(), result2));
-        }
-        else if (Witchery.Items.GENERIC.itemOdourOfPurity.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 2), Witchery.Items.GENERIC.itemAshWood.createStack(), result2));
-        }
-        else if (Witchery.Items.GENERIC.itemReekOfMisfortune.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 1), Witchery.Items.GENERIC.itemAshWood.createStack(), result2));
-        }
-        else if (Witchery.Items.GENERIC.itemFoulFume.isMatch(result2)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.log), new ItemStack(Items.coal, 1), result2));
-        }
+    public void loadCraftingRecipes(final ItemStack result) {    	
+		if (result == null) {
+			return;
+		}
+		final List<OvenRecipe> recipes = OvenRecipes.getRecipeMap();
+		for (final OvenRecipe recipe : recipes) {
+			if (recipe.isValid()) {
+				final ItemStack input = recipe.inputs.copy();
+				final ItemStack output = recipe.output.copy();
+				final ItemStack outputJar = recipe.outputJar.copy();
+				if (!Utils.areStacksEqual(result, output, true)) {
+					continue;
+				}				
+				final SmeltingPair rec = new SmeltingPair(
+						input,
+						output,
+						outputJar);
+				this.arecipes.add(rec);
+			}
+		}
     }
     
     public void loadUsageRecipes(final String inputId, final Object... ingredients) {
@@ -130,38 +92,28 @@ public class NEI_Handler_Oven extends TemplateRecipeHandler
         }
     }
     
-    public void loadUsageRecipes(final ItemStack ingred) {
-        final Map<ItemStack, ItemStack> recipes = (Map<ItemStack, ItemStack>)FurnaceRecipes.smelting().getSmeltingList();
-        for (final Map.Entry<ItemStack, ItemStack> recipe : recipes.entrySet()) {
-            final ItemStack result = recipe.getValue();
-            if (ingred.getItem() == recipe.getKey().getItem()) {
-                ItemStack byproduct = Witchery.Items.GENERIC.itemFoulFume.createStack();
-                if (ingred.getItem() == Item.getItemFromBlock(Blocks.sapling)) {
-                    byproduct = ((ingred.getItemDamage() == 0) ? Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack() : ((ingred.getItemDamage() == 1) ? Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack() : ((ingred.getItemDamage() == 2) ? Witchery.Items.GENERIC.itemHintOfRebirth.createStack() : Witchery.Items.GENERIC.itemFoulFume.createStack())));
-                    this.arecipes.add(new SmeltingPair(ingred, result, byproduct));
-                }
-                else if (ingred.getItem() == Item.getItemFromBlock(Witchery.Blocks.SAPLING)) {
-                    byproduct = ((ingred.getItemDamage() == 0) ? Witchery.Items.GENERIC.itemWhiffOfMagic.createStack() : ((ingred.getItemDamage() == 1) ? Witchery.Items.GENERIC.itemOdourOfPurity.createStack() : ((ingred.getItemDamage() == 2) ? Witchery.Items.GENERIC.itemReekOfMisfortune.createStack() : Witchery.Items.GENERIC.itemFoulFume.createStack())));
-                    this.arecipes.add(new SmeltingPair(ingred, result, byproduct));
-                }
-                else {
-                    if (!Witchery.Items.GENERIC.itemAshWood.isMatch(result) && ingred.getItem() != Items.coal && !(ingred.getItem() instanceof ItemFood)) {
-                        continue;
-                    }
-                    this.arecipes.add(new SmeltingPair(ingred, result, byproduct));
-                }
-            }
-        }
-        if (Witchery.Items.GENERIC.itemEmptyClayJar.isMatch(ingred)) {
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 0), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 1), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemHintOfRebirth.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 2), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemBreathOfTheGoddess.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.sapling, 1, 3), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemFoulFume.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 0), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemWhiffOfMagic.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 1), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemReekOfMisfortune.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Witchery.Blocks.SAPLING, 1, 2), Witchery.Items.GENERIC.itemAshWood.createStack(), Witchery.Items.GENERIC.itemOdourOfPurity.createStack()));
-            this.arecipes.add(new SmeltingPair(new ItemStack(Blocks.log), new ItemStack(Items.coal, 1, 1), Witchery.Items.GENERIC.itemFoulFume.createStack()));
-        }
+    public void loadUsageRecipes(final ItemStack ingredient) {
+
+		final List<OvenRecipe> recipes = OvenRecipes.getRecipeMap();
+		if (ingredient != null) {
+			//Logger.INFO("Looking up Usage results for "+ItemUtils.getItemName(ingredient));
+		}
+		for (final OvenRecipe recipe : recipes) {
+			if (recipe.isValid()) {
+				final ItemStack input = recipe.inputs.copy();
+				final ItemStack output = recipe.output.copy();
+				final ItemStack outputJar = recipe.outputJar.copy();
+				if (!Utils.areStacksEqual(ingredient, input, true)) {
+					continue;
+				}
+				final SmeltingPair rec = new SmeltingPair(
+						input,
+						output,
+						outputJar);
+				this.arecipes.add(rec);
+			}
+		}
+    	
     }
     
     public String getGuiTexture() {

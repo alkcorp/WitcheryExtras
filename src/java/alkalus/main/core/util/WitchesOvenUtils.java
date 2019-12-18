@@ -1,11 +1,15 @@
 package alkalus.main.core.util;
 
+import java.util.ArrayList;
+
 import com.emoniph.witchery.Witchery;
 import com.emoniph.witchery.blocks.BlockWitchesOven;
 import com.emoniph.witchery.blocks.BlockWitchesOven.TileEntityWitchesOven;
 import com.emoniph.witchery.util.Config;
 import com.emoniph.witchery.util.Log;
 
+import alkalus.main.core.crafting.OvenRecipes;
+import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -37,6 +41,7 @@ public class WitchesOvenUtils {
 	public static ItemStack[] getFurnaceItemStacks(TileEntityWitchesOven aTile) {
 		return (ItemStack[]) ReflectionUtils.getFieldValue(ReflectionUtils.getField(TileEntityWitchesOven.class, "furnaceItemStacks"), aTile);
 	}
+    
 	public static int[] getSlotsTop(TileEntityWitchesOven aTile) {
 		return (int[]) ReflectionUtils.getFieldValue(ReflectionUtils.getField(TileEntityWitchesOven.class, "slots_top"), aTile);
 	}
@@ -49,90 +54,215 @@ public class WitchesOvenUtils {
 
     public static void updateEntity(TileEntityWitchesOven aTile) {
         final boolean flag = aTile.furnaceBurnTime > 0;
-        boolean flag2 = false;
+        boolean aDoBlockUpdate = false;
         if (aTile.furnaceBurnTime > 0) {
             --aTile.furnaceBurnTime;
         }
         if (!aTile.getWorldObj().isRemote) {
-            if (aTile.furnaceBurnTime == 0 && canSmelt(aTile)) {
-                final int itemBurnTime = TileEntityFurnace.getItemBurnTime(getFurnaceItemStacks(aTile)[1]);
-                aTile.furnaceBurnTime = itemBurnTime;
-                aTile.currentItemBurnTime = itemBurnTime;
-                if (aTile.furnaceBurnTime > 0) {
-                    flag2 = true;
-                    if (getFurnaceItemStacks(aTile)[1] != null) {
-                        final ItemStack itemStack = getFurnaceItemStacks(aTile)[1];
-                        --itemStack.stackSize;
-                        if (getFurnaceItemStacks(aTile)[1].stackSize == 0) {
-                            getFurnaceItemStacks(aTile)[1] = getFurnaceItemStacks(aTile)[1].getItem().getContainerItem(getFurnaceItemStacks(aTile)[1]);
+        	
+        	if (canSmelt(aTile)) {
+        		
+        		// Add Fuel
+                if (aTile.furnaceBurnTime == 0) {
+                    final int itemBurnTime = TileEntityFurnace.getItemBurnTime(getFuelSlot(aTile));
+                    aTile.furnaceBurnTime = itemBurnTime;
+                    aTile.currentItemBurnTime = itemBurnTime;
+                    if (aTile.furnaceBurnTime > 0) {
+                        aDoBlockUpdate = true;
+                        if (getFuelSlot(aTile) != null) {
+                            final ItemStack itemStack = getFuelSlot(aTile);
+                            --itemStack.stackSize;
+                            if (getFuelSlot(aTile).stackSize == 0) {
+                            	setFuelSlot(aTile, getFuelSlot(aTile).getItem().getContainerItem(getFuelSlot(aTile)));
+                            }
                         }
                     }
                 }
-            }
-            if (aTile.isBurning() && canSmelt(aTile)) {
-                ++aTile.furnaceCookTime;
-                if (aTile.furnaceCookTime >= getCookTime(aTile)) {
-                    aTile.furnaceCookTime = 0;
-                    aTile.smeltItem();
-                    flag2 = true;
+                
+                // Try do recipe
+                if (aTile.isBurning()) {
+                    ++aTile.furnaceCookTime;
+                    if (aTile.furnaceCookTime >= getCookTime(aTile)) {
+                        aTile.furnaceCookTime = 0;
+                        smeltItem(aTile);
+                        aDoBlockUpdate = true;
+                    }
                 }
-            }
-            else {
-                aTile.furnaceCookTime = 0;
-            }
+                else {
+                    aTile.furnaceCookTime = 0;
+                }
+        		
+        		
+        		
+        	}
+        	
+        	
+        	
+            
+
             if (flag != aTile.furnaceBurnTime > 0) {
-                flag2 = true;
+                aDoBlockUpdate = true;
                 BlockWitchesOven.updateWitchesOvenBlockState(aTile.furnaceBurnTime > 0, aTile.getWorldObj(), aTile.xCoord, aTile.yCoord, aTile.zCoord);
             }
         }
-        if (flag2) {
+        if (aDoBlockUpdate) {
+            aTile.markDirty();
             aTile.getWorldObj().markBlockForUpdate(aTile.xCoord, aTile.yCoord, aTile.zCoord);
         }
     }
-	
 
 
+    public static int getEmptyJarCount(TileEntityWitchesOven aTile) {
+    	ItemStack aJarStack = getEmptyJarSlot(aTile);
+    	return aJarStack != null ? aJarStack.stackSize : 0;
+    }    
+    
+    public static ItemStack getInputSlot(TileEntityWitchesOven aTile) {
+    	ItemStack aJarStack = getFurnaceItemStacks(aTile)[SLOT_TO_COOK];
+    	return aJarStack != null ? aJarStack : null;
+    }
+    public static ItemStack getFuelSlot(TileEntityWitchesOven aTile) {
+    	ItemStack aJarStack = getFurnaceItemStacks(aTile)[SLOT_FUEL];
+    	return aJarStack != null ? aJarStack : null;
+    }
+    public static ItemStack getOutputSlot(TileEntityWitchesOven aTile) {
+    	ItemStack aJarStack = getFurnaceItemStacks(aTile)[SLOT_COOKED];
+    	return aJarStack != null ? aJarStack : null;
+    }
+    public static ItemStack getFumeOutputSlot(TileEntityWitchesOven aTile) {
+    	ItemStack aJarStack = getFurnaceItemStacks(aTile)[SLOT_BY_PRODUCT];
+    	return aJarStack != null ? aJarStack : null;
+    }
+    public static ItemStack getEmptyJarSlot(TileEntityWitchesOven aTile) {
+    	ItemStack aJarStack = getFurnaceItemStacks(aTile)[SLOT_JARS];
+    	return aJarStack != null ? aJarStack : null;
+    }
+    
+    public static void setInputSlot(TileEntityWitchesOven aTile, ItemStack aNewVal) {
+    	getFurnaceItemStacks(aTile)[SLOT_TO_COOK] = aNewVal;
+    }
+    public static void setFuelSlot(TileEntityWitchesOven aTile, ItemStack aNewVal) {
+    	getFurnaceItemStacks(aTile)[SLOT_FUEL] = aNewVal;
+    }
+    public static void setOutputSlot(TileEntityWitchesOven aTile, ItemStack aNewVal) {
+    	getFurnaceItemStacks(aTile)[SLOT_COOKED] = aNewVal;
+    }
+    public static void setFumeOutputSlot(TileEntityWitchesOven aTile, ItemStack aNewVal) {
+    	getFurnaceItemStacks(aTile)[SLOT_BY_PRODUCT] = aNewVal;
+    }
+    public static void setEmptyJarSlot(TileEntityWitchesOven aTile, ItemStack aNewVal) {
+    	getFurnaceItemStacks(aTile)[SLOT_JARS] = aNewVal;
+    }
 
 
 	public static boolean canSmelt(TileEntityWitchesOven aTile) {
-		if (getFurnaceItemStacks(aTile)[0] == null) {
+		if (getInputSlot(aTile) == null) {
+			return false;
+		}		
+		OvenRecipe aValidRecipe = null;
+		int aJarCount = getEmptyJarCount(aTile);		
+		// Do we have any recipes without jar usage?
+		if (aJarCount == 0) {			
+			for (OvenRecipe r : OvenRecipes.getRecipeMap()){
+				if (r.jars > 0) {
+					continue;
+				}
+				else {
+					if (Utils.areStacksEqual(r.inputs, getInputSlot(aTile))) {
+						aValidRecipe = r;
+						break;
+					}
+				}				
+			}			
+		}
+		else {
+			for (OvenRecipe r : OvenRecipes.getRecipeMap()){
+				if (r.jars > aJarCount) {
+					continue;
+				}
+				else {
+					if (Utils.areStacksEqual(r.inputs, getInputSlot(aTile))) {
+						aValidRecipe = r;
+						break;
+					}
+				}				
+			}
+		}	
+		
+		if (aValidRecipe == null) {
 			return false;
 		}
-		final ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(getFurnaceItemStacks(aTile)[0]);
-		if (itemstack == null) {
-			return false;
+		else {
+			final ItemStack itemstack = aValidRecipe.output;
+			if (!getOutputSlot(aTile).isItemEqual(itemstack)) {
+				return false;
+			}
+			final int result = getOutputSlot(aTile).stackSize + itemstack.stackSize;
+			return result <= aTile.getInventoryStackLimit() && result <= itemstack.getMaxStackSize();
 		}
-		final Item item = itemstack.getItem();
-		if (item != Items.coal && !(item instanceof ItemFood) && !Witchery.Items.GENERIC.itemAshWood.isMatch(itemstack)) {
-			return false;
-		}
-		if (getFurnaceItemStacks(aTile)[2] == null) {
-			return true;
-		}
-		if (!getFurnaceItemStacks(aTile)[2].isItemEqual(itemstack)) {
-			return false;
-		}
-		final int result = getFurnaceItemStacks(aTile)[2].stackSize + itemstack.stackSize;
-		return result <= aTile.getInventoryStackLimit() && result <= itemstack.getMaxStackSize();
 	}
 	
     public static void smeltItem(TileEntityWitchesOven aTile) {
-        if (canSmelt(aTile)) {
-            final ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(getFurnaceItemStacks(aTile)[0]);
-            if (getFurnaceItemStacks(aTile)[2] == null) {
-                getFurnaceItemStacks(aTile)[2] = itemstack.copy();
-            }
-            else if (getFurnaceItemStacks(aTile)[2].isItemEqual(itemstack)) {
-                final ItemStack itemStack = getFurnaceItemStacks(aTile)[2];
-                itemStack.stackSize += itemstack.stackSize;
-            }
-            generateByProduct(aTile, itemstack);
-            final ItemStack itemStack2 = getFurnaceItemStacks(aTile)[0];
-            --itemStack2.stackSize;
-            if (getFurnaceItemStacks(aTile)[0].stackSize <= 0) {
-                getFurnaceItemStacks(aTile)[0] = null;
-            }
-        }
+    	
+		OvenRecipe aValidRecipe = null;
+		int aJarCount = getEmptyJarCount(aTile);		
+		// Do we have any recipes without jar usage?
+		if (aJarCount == 0) {			
+			for (OvenRecipe r : OvenRecipes.getRecipeMap()){
+				if (r.jars > 0) {
+					continue;
+				}
+				else {
+					if (Utils.areStacksEqual(r.inputs, getInputSlot(aTile))) {
+						aValidRecipe = r;
+						break;
+					}
+				}				
+			}			
+		}
+		else {
+			for (OvenRecipe r : OvenRecipes.getRecipeMap()){
+				if (r.jars > aJarCount) {
+					continue;
+				}
+				else {
+					if (Utils.areStacksEqual(r.inputs, getInputSlot(aTile))) {
+						aValidRecipe = r;
+						break;
+					}
+				}				
+			}
+		}	
+		
+		if (aValidRecipe == null) {
+			return;
+		}
+		else {
+			
+		}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+		/*if (canSmelt(aTile)) {
+		    final ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(getInputSlot(aTile));
+		    if (getOutputSlot(aTile) == null) {
+		        setOutputSlot(aTile, itemstack.copy());
+		    }
+		    else if (getOutputSlot(aTile).isItemEqual(itemstack)) {
+		        final ItemStack itemStack = getOutputSlot(aTile);
+		        itemStack.stackSize += itemstack.stackSize;
+		    }
+		    generateByProduct(aTile, itemstack);
+		    final ItemStack itemStack2 = getInputSlot(aTile);
+		    --itemStack2.stackSize;
+		    if (getInputSlot(aTile).stackSize <= 0) {
+		        setInputSlot(aTile, null);
+		    }
+		}*/
     }
 
 	public static int getFumeFunnels(TileEntityWitchesOven aTile) {
@@ -210,10 +340,10 @@ public class WitchesOvenUtils {
 		try {
 			final double BASE_CHANCE = 0.3;
 			final double funnels = getFumeFunnelsChance(aTile);
-			Log.instance().debug("" + getFurnaceItemStacks(aTile)[0] + ": " + getFurnaceItemStacks(aTile)[0].getItem().getUnlocalizedName());
-			if (aTile.getWorldObj().rand.nextDouble() <= Math.min(0.3 + funnels, 1.0) && getFurnaceItemStacks(aTile)[4] != null) {
-				if (getFurnaceItemStacks(aTile)[0].getItem() == Item.getItemFromBlock(Blocks.sapling) && getFurnaceItemStacks(aTile)[0].getItemDamage() != 3) {
-					switch (getFurnaceItemStacks(aTile)[0].getItemDamage()) {
+			Log.instance().debug("" + getInputSlot(aTile) + ": " + getInputSlot(aTile).getItem().getUnlocalizedName());
+			if (aTile.getWorldObj().rand.nextDouble() <= Math.min(0.3 + funnels, 1.0) && getEmptyJarSlot(aTile) != null) {
+				if (getInputSlot(aTile).getItem() == Item.getItemFromBlock(Blocks.sapling) && getInputSlot(aTile).getItemDamage() != 3) {
+					switch (getInputSlot(aTile).getItemDamage()) {
 						case 0: {
 							createByProduct(aTile, Witchery.Items.GENERIC.itemExhaleOfTheHornedOne.createStack(1));
 							break;
@@ -228,8 +358,8 @@ public class WitchesOvenUtils {
 						}
 					}
 				}
-				else if (getFurnaceItemStacks(aTile)[0].getItem() == Item.getItemFromBlock(Witchery.Blocks.SAPLING)) {
-					switch (getFurnaceItemStacks(aTile)[0].getItemDamage()) {
+				else if (getInputSlot(aTile).getItem() == Item.getItemFromBlock(Witchery.Blocks.SAPLING)) {
+					switch (getInputSlot(aTile).getItemDamage()) {
 						case 0: {
 							createByProduct(aTile, Witchery.Items.GENERIC.itemWhiffOfMagic.createStack(1));
 							break;
@@ -244,11 +374,11 @@ public class WitchesOvenUtils {
 						}
 					}
 				}
-				else if (getFurnaceItemStacks(aTile)[0].getUnlocalizedName().equals("tile.bop.saplings") && getFurnaceItemStacks(aTile)[0].getItemDamage() == 6) {
+				else if (getInputSlot(aTile).getUnlocalizedName().equals("tile.bop.saplings") && getInputSlot(aTile).getItemDamage() == 6) {
 					createByProduct(aTile, Witchery.Items.GENERIC.itemHintOfRebirth.createStack(1));
 				}
-				else if (getFurnaceItemStacks(aTile)[0].hasTagCompound() && getFurnaceItemStacks(aTile)[0].getTagCompound().hasKey("Genome")) {
-					final NBTBase tag = getFurnaceItemStacks(aTile)[0].getTagCompound().getTag("Genome");
+				else if (isForestrySapling(getInputSlot(aTile))) {
+					final NBTBase tag = getInputSlot(aTile).getTagCompound().getTag("Genome");
 					if (tag != null && tag instanceof NBTTagCompound) {
 						final NBTTagCompound compound = (NBTTagCompound)tag;
 						if (compound.hasKey("Chromosomes") && compound.getTag("Chromosomes") instanceof NBTTagList) {
@@ -289,21 +419,62 @@ public class WitchesOvenUtils {
 
 	public static void createByProduct(TileEntityWitchesOven aTile, final ItemStack byProduct) {
 		final int BY_PRODUCT_INDEX = 3;
-		if (getFurnaceItemStacks(aTile)[3] == null) {
-			getFurnaceItemStacks(aTile)[3] = byProduct;
-			final ItemStack itemStack = getFurnaceItemStacks(aTile)[4];
+		if (getFumeOutputSlot(aTile) == null) {
+			setFumeOutputSlot(aTile, byProduct);
+			final ItemStack itemStack = getEmptyJarSlot(aTile);
 			if (--itemStack.stackSize <= 0) {
-				getFurnaceItemStacks(aTile)[4] = null;
+				setEmptyJarSlot(aTile, null);
 			}
 		}
-		else if (getFurnaceItemStacks(aTile)[3].isItemEqual(byProduct) && getFurnaceItemStacks(aTile)[3].stackSize + byProduct.stackSize < getFurnaceItemStacks(aTile)[3].getMaxStackSize()) {
-			final ItemStack itemStack2 = getFurnaceItemStacks(aTile)[3];
+		else if (getFumeOutputSlot(aTile).isItemEqual(byProduct) && getFumeOutputSlot(aTile).stackSize + byProduct.stackSize < getFumeOutputSlot(aTile).getMaxStackSize()) {
+			final ItemStack itemStack2 = getFumeOutputSlot(aTile);
 			itemStack2.stackSize += byProduct.stackSize;
-			final ItemStack itemStack3 = getFurnaceItemStacks(aTile)[4];
+			final ItemStack itemStack3 = getEmptyJarSlot(aTile);
 			if (--itemStack3.stackSize <= 0) {
-				getFurnaceItemStacks(aTile)[4] = null;
+				setEmptyJarSlot(aTile, null);
 			}
 		}
+	}
+	
+	private static boolean isForestrySapling(ItemStack aSap) {
+		if (aSap != null && aSap.hasTagCompound() && aSap.getTagCompound().hasKey("Genome")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static ItemStack getVanillaEquivForForestrySapling(ItemStack aSap) {
+		if (isForestrySapling(aSap)) {
+			final NBTBase tag = aSap.getTagCompound().getTag("Genome");
+			if (tag != null && tag instanceof NBTTagCompound) {
+				final NBTTagCompound compound = (NBTTagCompound)tag;
+				if (compound.hasKey("Chromosomes") && compound.getTag("Chromosomes") instanceof NBTTagList) {
+					final NBTTagList list = compound.getTagList("Chromosomes", 10);
+					if (list != null && list.tagCount() > 0) {
+						final NBTBase chromoBase = (NBTBase)list.getCompoundTagAt(0);
+						if (chromoBase != null && chromoBase instanceof NBTTagCompound) {
+							final NBTTagCompound chromosome = (NBTTagCompound)chromoBase;
+							if (chromosome.hasKey("UID0")) {
+								final String treeType = chromosome.getString("UID0");
+								if (treeType != null) {
+									Log.instance().debug("Forestry tree: " + treeType);
+									if (treeType.equals("forestry.treeOak")) {
+										return new ItemStack(Blocks.sapling, 1, 0);
+									}
+									else if (treeType.equals("forestry.treeSpruce")) {
+										return new ItemStack(Blocks.sapling, 1, 1);
+									}
+									else if (treeType.equals("forestry.treeBirch")) {
+										return new ItemStack(Blocks.sapling, 1, 2);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 }
