@@ -9,14 +9,11 @@ import org.apache.logging.log4j.Level;
 
 public class AsmConfig {
 	
-	public static class BlankClassData {
-		
-	}
-	
 	public static boolean loaded;
 	public static Configuration config;
-	
+
 	public static boolean enablePatchNEI;
+	public static boolean allowPoppetShelfChunkLoading;
 	
 
 	public AsmConfig(File file) {
@@ -36,9 +33,15 @@ public class AsmConfig {
 			}
 			Property prop;			
 
-			prop = config.get("general", "enabledLwjglKeybindingFix", true);
-			prop.comment = "Prevents the game crashing from having invalid keybinds. https://github.com/alkcorp/GTplusplus/issues/544";
-			prop.setLanguageKey("gtpp.enabledLwjglKeybindingFix").setRequiresMcRestart(true);
+			prop = config.get("general", "enablePatchNEI", true);
+			prop.comment = "Patch NEI for good recipe support.";
+			prop.setLanguageKey("enablePatchNEI").setRequiresMcRestart(true);
+			enablePatchNEI = prop.getBoolean(true);
+			propOrder.add(prop.getName());
+			
+			prop = config.get("general", "allowPoppetShelfChunkLoading", true);
+			prop.comment = "Enables Chunk Loading by Poppet Shelves.";
+			prop.setLanguageKey("allowPoppetShelfChunkLoading").setRequiresMcRestart(true);
 			enablePatchNEI = prop.getBoolean(true);
 			propOrder.add(prop.getName());
 

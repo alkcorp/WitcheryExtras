@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_NEIWitcheryConfig;
+import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityPoppetShelf;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesOven;
 import alkalus.main.core.util.Logger;
 import cpw.mods.fml.relauncher.CoreModManager;
@@ -63,6 +64,11 @@ public class WE_CORE_Handler implements IClassTransformer {
 		// Patch witches oven to support recipe maps.
 		if (transformedName.equals("com.emoniph.witchery.blocks.BlockWitchesOven$TileEntityWitchesOven")) {
 			return new ClassTransformer_Witchery_TileEntityWitchesOven(transformedName, basicClass, obfuscated).getWriter().toByteArray();
+		}	
+		
+		// Patch Poppet Shelf to enable/disable chunk loading
+		if (transformedName.equals("com.emoniph.witchery.blocks.BlockPoppetShelf$TileEntityPoppetShelf")) {
+			return new ClassTransformer_Witchery_TileEntityPoppetShelf(transformedName, basicClass, obfuscated).getWriter().toByteArray();
 		}	
 		
 		return basicClass;
