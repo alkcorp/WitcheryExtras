@@ -86,8 +86,8 @@ public class PredictionHandler {
 			if (aOld != null) {
 				if (aOld.itemWeight != aNewValues[i-1]) {
 					RecipeManager.Predictions.remove(aOld);
+					WitcheryExtras.log(0, "Adjusting weight of "+aOld.getTranslationKey()+" from "+aOld.itemWeight+" to "+aNewValues[i-1]+".");
 					RecipeManager.Predictions.add(generateNewPrediction(aOld, aNewValues[i-1]));
-					WitcheryExtras.log(0, "Adjusted weight of "+aOld.getTranslationKey()+" from "+aOld.itemWeight+" to "+aNewValues[i-1]+".");
 				}
 			}
 		}

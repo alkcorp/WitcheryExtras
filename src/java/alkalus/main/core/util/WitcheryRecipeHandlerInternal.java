@@ -255,6 +255,7 @@ public class WitcheryRecipeHandlerInternal {
 	public static synchronized boolean addNewPrediction(Prediction prediction) {
 		try {
 			PredictionManager.instance().addPrediction(prediction);
+			WitcheryExtras.log(0, "Added Prediction: "+prediction.getTranslationKey()+" | "+prediction.predictionID);
 			return true;			
 		}
 		catch (NullPointerException e) {
@@ -263,12 +264,13 @@ public class WitcheryRecipeHandlerInternal {
 	}
 
 	public static synchronized boolean removePrediction(Prediction prediction) {
-		Field aRegistry = ReflectionUtils.getField(CreaturePower.Registry.class, "predictions");
-		if (prediction == null || aRegistry == null || ReflectionUtils.getFieldValue(aRegistry, PredictionManager.instance()) != null) {
+		Field aRegistry = ReflectionUtils.getField(PredictionManager.class, "predictions");
+		if (prediction == null) {
 			WitcheryExtras.log(2, "Null Prediction parsed into removePrediction(). Please check all Predictions are valid before calling this function.");
 			return false;
 		}
-		Hashtable<Integer, Prediction> predictions = (Hashtable<Integer, Prediction>) ReflectionUtils.getFieldValue(aRegistry, PredictionManager.instance());
+		PredictionManager aInstance = PredictionManager.instance();		
+		Hashtable<Integer, Prediction> predictions = (Hashtable<Integer, Prediction>) ReflectionUtils.getFieldValue(aRegistry, aInstance);
 		int aSizeStart = predictions.size();
 		for (Prediction aPredic : predictions.values()) {
 			if (aPredic != null && aPredic.predictionID == prediction.predictionID) {
