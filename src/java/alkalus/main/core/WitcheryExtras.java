@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import alkalus.main.api.plugin.base.BasePluginWitchery;
-import alkalus.main.core.entities.BabaYagaHandler;
+import alkalus.main.core.entities.PredictionHandler;
 import alkalus.main.core.proxy.Proxy_Common;
 import alkalus.main.core.util.Logger;
 import cpw.mods.fml.common.Mod;
@@ -70,7 +70,7 @@ public class WitcheryExtras {
 			log(0, "Loading Plugin: "+bwp.getPluginName()+" | Phase: Post-Init");
 			bwp.postInit();
 		}
-		BabaYagaHandler.adjustPredictions();
+		PredictionHandler.adjustPredictions();
 	}	
 	
 	public static final void log(int level, String text) {

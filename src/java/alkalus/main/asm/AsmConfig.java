@@ -1,11 +1,13 @@
 package alkalus.main.asm;
 
-import cpw.mods.fml.common.FMLLog;
 import java.io.File;
 import java.util.ArrayList;
+
+import org.apache.logging.log4j.Level;
+
+import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import org.apache.logging.log4j.Level;
 
 public class AsmConfig {
 	
@@ -14,8 +16,23 @@ public class AsmConfig {
 
 	public static boolean enablePatchNEI;
 	public static boolean allowPoppetShelfChunkLoading;
-	public static double chanceBabaYagaGood;
-	public static double chanceBabaYagaBad;
+	
+	// Predictions
+	public static int chancePredictionSpawnBabaYagaGood;
+	public static int chancePredictionSpawnBabaYagaBad;
+	public static int chancePredictionExtraCoal;
+	public static int chancePredictionSpawnEnt;
+	public static int chancePredictionStumbleAndFall;
+	public static int chancePredictionGetWet;
+	public static int chancePredictionExtraIron;
+	public static int chancePredictionSpawnZombie;
+	public static int chancePredictionSpawnProtectiveAnimal;
+	public static int chancePredictionSpawnSkeleton;
+	public static int chancePredictionSpawnBuriedTreasure;
+	public static int chancePredictionTeleportNether;
+	public static int chancePredictionSpawnFriendlyWolf;
+	public static int chancePredictionFindShinies;
+	public static int chancePredictionVillagerLove;
 	
 
 	public AsmConfig(File file) {
@@ -50,19 +67,116 @@ public class AsmConfig {
 			propOrder.add(prop.getName());
 
 			
+			/*
+			 * Predictions
+			 */			
+			
 			// Adjusts chances for Baba Yaga spawns
-			prop = config.get("general", "chanceBabaYagaGood", 0.05D);
-			prop.comment = "Adjusts chances for 'Good' Baba Yaga spawns";
-			prop.setLanguageKey("chanceBabaYagaGood").setRequiresMcRestart(true);
-			chanceBabaYagaGood = prop.getDouble(0.05D);
-			propOrder.add(prop.getName());
-			prop = config.get("general", "chanceBabaYagaBad", 0.05D);
-			prop.comment = "Adjusts chances for 'Bad' Baba Yaga spawns";
-			prop.setLanguageKey("chanceBabaYagaBad").setRequiresMcRestart(true);
-			chanceBabaYagaBad = prop.getDouble(0.05D);
+			prop = config.get("predictions", "chancePredictionSpawnBabaYagaGood", 2);
+			prop.comment = "Adjusts weight for 'Good' Baba Yaga spawns";
+			prop.setLanguageKey("chancePredictionSpawnBabaYagaGood");
+			chancePredictionSpawnBabaYagaGood = prop.getInt(2);
 			propOrder.add(prop.getName());
 			
+			prop = config.get("predictions", "chancePredictionSpawnBabaYagaBad", 2);
+			prop.comment = "Adjusts weight for 'Bad' Baba Yaga spawns";
+			prop.setLanguageKey("chancePredictionSpawnBabaYagaBad");
+			chancePredictionSpawnBabaYagaBad = prop.getInt(2);
+			propOrder.add(prop.getName());
+			
+			// Extra coal
+			prop = config.get("predictions", "chancePredictionExtraCoal", 13);
+			prop.comment = "Adjusts weight for Extra Coal Drops";
+			prop.setLanguageKey("chancePredictionExtraCoal");
+			chancePredictionExtraCoal = prop.getInt(13);
+			propOrder.add(prop.getName());
+			
+			// Spawn Ent
+			prop = config.get("predictions", "chancePredictionSpawnEnt", 3);
+			prop.comment = "Adjusts weight for Ent Spawn";
+			prop.setLanguageKey("chancePredictionSpawnEnt");
+			chancePredictionSpawnEnt = prop.getInt(3);
+			propOrder.add(prop.getName());
+			
+			// Create Pit
+			prop = config.get("predictions", "chancePredictionStumbleAndFall", 13);
+			prop.comment = "Adjusts weight for 'Stumble & Fall'";
+			prop.setLanguageKey("chancePredictionStumbleAndFall");
+			chancePredictionStumbleAndFall = prop.getInt(13);
+			propOrder.add(prop.getName());
+			
+			// Get Wet
+			prop = config.get("predictions", "chancePredictionGetWet", 13);
+			prop.comment = "Adjusts weight for 'Get Wet'";
+			prop.setLanguageKey("chancePredictionGetWet");
+			chancePredictionGetWet = prop.getInt(13);
+			propOrder.add(prop.getName());
+			
+			// Extra Iron
+			prop = config.get("predictions", "chancePredictionExtraIron", 8);
+			prop.comment = "Adjusts weight for Extra Iron Drops";
+			prop.setLanguageKey("chancePredictionExtraIron");
+			chancePredictionExtraIron = prop.getInt(8);
+			propOrder.add(prop.getName());
+			
+			// Spawn Zombie
+			prop = config.get("predictions", "chancePredictionSpawnZombie", 13);
+			prop.comment = "Adjusts weight for Zombie Spawn";
+			prop.setLanguageKey("chancePredictionSpawnZombie");
+			chancePredictionSpawnZombie = prop.getInt(13);
+			propOrder.add(prop.getName());
+			
+			// Spawn Wolf/Owl Friend
+			prop = config.get("predictions", "chancePredictionSpawnProtectiveAnimal", 13);
+			prop.comment = "Adjusts weight for Friendly Animal Spawn";
+			prop.setLanguageKey("chancePredictionSpawnProtectiveAnimal");
+			chancePredictionSpawnProtectiveAnimal = prop.getInt(13);
+			propOrder.add(prop.getName());
+			
+			// Spawn Skeleton
+			prop = config.get("predictions", "chancePredictionSpawnSkeleton", 13);
+			prop.comment = "Adjusts weight for Skeleton Spawn";
+			prop.setLanguageKey("chancePredictionSpawnSkeleton");
+			chancePredictionSpawnSkeleton = prop.getInt(13);
+			propOrder.add(prop.getName());
+			
+			// Spawn Treasure
+			prop = config.get("predictions", "chancePredictionSpawnBuriedTreasure", 2);
+			prop.comment = "Adjusts weight for Buried Treasure spawn";
+			prop.setLanguageKey("chancePredictionSpawnBuriedTreasure");
+			chancePredictionSpawnBuriedTreasure = prop.getInt(2);
+			propOrder.add(prop.getName());
+			
+			// Nether Teleport
+			prop = config.get("predictions", "chancePredictionTeleportNether", 3);
+			prop.comment = "Adjusts weight for Nether Teleport";
+			prop.setLanguageKey("chancePredictionTeleportNether");
+			chancePredictionTeleportNether = prop.getInt(3);
+			propOrder.add(prop.getName());
+			
+			// Spawn Wolf Friend
+			prop = config.get("predictions", "chancePredictionSpawnFriendlyWolf", 3);
+			prop.comment = "Adjusts weight for ";
+			prop.setLanguageKey("chancePredictionSpawnFriendlyWolf");
+			chancePredictionSpawnFriendlyWolf = prop.getInt(3);
+			propOrder.add(prop.getName());
+			
+			// Find Shinies (Emerald/Diamond)
+			prop = config.get("predictions", "chancePredictionFindShinies", 3);
+			prop.comment = "Adjusts weight for Bonus Diamond/Emerald drop from stone";
+			prop.setLanguageKey("chancePredictionFindShinies");
+			chancePredictionFindShinies = prop.getInt(3);
+			propOrder.add(prop.getName());
+			
+			// Villager Love
+			prop = config.get("predictions", "chancePredictionVillagerLove", 2);
+			prop.comment = "Adjusts weight for Villager + Player lovemaking event";
+			prop.setLanguageKey("chancePredictionVillagerLove");
+			chancePredictionVillagerLove = prop.getInt(2);
+			propOrder.add(prop.getName());			
+			
 			config.setCategoryPropertyOrder("general", propOrder);
+			config.setCategoryPropertyOrder("predictions", propOrder);
 			config.setCategoryPropertyOrder("debug", propOrderDebug);
 			if (config.hasChanged()) {
 				config.save();
