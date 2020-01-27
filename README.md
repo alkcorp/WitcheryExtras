@@ -1,6 +1,13 @@
 # WitcheryExtras
 This mod allows you to Add/Remove/Tweak Witchery for minecraft 1.7.10  
 
+## Current Build Status  
+### CircleCI - [![CircleCI](https://circleci.com/gh/alkcorp/WitcheryExtras/tree/master.svg?style=svg)](https://circleci.com/gh/alkcorp/WitcheryExtras/tree/master)   
+Click the Green Passed/Red Failed button for the latest builds!  
+Make sure you are signed in via Github/BitBucket.  
+If you have not done so, login here first. [Sign into CircleCI here!](https://circleci.com/vcs-authorize/)  
+Downloads can be found on the artefacts tab (builds) located within each job.  
+
 ## Witchery  
 https://sites.google.com/site/witcherymod/  
   
