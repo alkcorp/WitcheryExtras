@@ -50,7 +50,7 @@ public class RecipeManager {
 	/*
 	 * Convenience classes for all the different recipe types.
 	 */	
-	
+
 	/**
 	 * 
 	 * Use this class to queue {@link Runnable} objects for loading at the end of each load phase.
@@ -64,7 +64,7 @@ public class RecipeManager {
 
 		/**
 		 * This method MUST be called prior to {@link WitcheryExtras} starting it's {@code PreInit()} phase.
-		* 
+		 * 
 		 * @param basePluginWitchery - {@link BasePluginWitchery} object which you want to load after {@link WitcheryExtras} {@code PreInit()} phase.
 		 * @return - {@link boolean} which always returns true, to signify that the plugin has been queued.
 		 */
@@ -87,7 +87,7 @@ public class RecipeManager {
 		 * This method does not need to be called prior to {@link WitcheryExtras} starting it's {@code PreInit()} phase.
 		 * This method does not need to be called prior to {@link WitcheryExtras} starting it's {@code Init()} phase.
 		 * This method MUST be called prior to {@link WitcheryExtras} starting it's {@code PostInit()} phase.
-		* 
+		 * 
 		 * @param plugin - {@link BasePluginWitchery} object which you want to load after {@link WitcheryExtras} {@code PostInit()} phase.
 		 * @return - {@link boolean} which always returns true, to signify that the plugin has been queued.
 		 */
@@ -95,7 +95,7 @@ public class RecipeManager {
 			WitcheryExtras.addEventPostInit(plugin);			
 			return true;
 		}
-		
+
 	}
 
 	public static class WitchesOven {
@@ -112,7 +112,7 @@ public class RecipeManager {
 		public static synchronized boolean addRecipe(final ItemStack input1, final String inputString1, final int jars,	final ItemStack customOutput, final int amt1, final ItemStack outputJarStack, final int amt2) {
 			return WitcheryRecipeHandlerInternal.addOvenRecipe(input1, inputString1, jars, customOutput, amt1, outputJarStack, amt2);
 		}
-		
+
 		/** This Function will remove the  {@link OvenRecipe} input.
 		 * @param mRecipe - An {@link OvenRecipe} for a recipe you wish to remove.
 		 * @return - {@link boolean} representing whether or not the recipe was removed.
@@ -145,7 +145,7 @@ public class RecipeManager {
 	}
 
 	public static class SpinningWheel {
-		
+
 		/**
 		 * 
 		 * @param aInputFibre - The Item to be spun.
@@ -156,7 +156,7 @@ public class RecipeManager {
 		public static boolean addRecipe(ItemStack aInputFibre, ItemStack aOutput, ItemStack[] aModifiers) {
 			return WitcheryRecipeHandlerInternal.addSpinningWheelRecipe(aOutput, aInputFibre, aModifiers);
 		}
-		
+
 		/** This Function will remove the closest matching recipe.
 		 * @param result - An {@link ItemStack}, The result of the spinning recipe.
 		 * @param fibre - An {@link ItemStack}, The 'fibre' used to produce the result..
@@ -166,7 +166,7 @@ public class RecipeManager {
 		public static boolean removeRecipe(ItemStack result, ItemStack fibre, ItemStack... modifiers) {
 			return WitcheryRecipeHandlerInternal.removeSpinningWheelRecipe(result, fibre, modifiers);			
 		}
-		
+
 		/** This Function will remove the {@link SpinningRecipe} input.
 		 * @param outputs - An {@link SpinningRecipe} for a recipe you wish to remove.
 		 * @return - {@link boolean} representing whether or not the recipe was removed.
@@ -207,7 +207,7 @@ public class RecipeManager {
 		public static synchronized SpinningRecipe findRecipeUsingFibre(ItemStack ingredient) {
 			return Witchery_SpinningWheel.findRecipeUsingFibre(ingredient);
 		}
-		
+
 	}
 
 	public static class Distillery {
@@ -369,6 +369,13 @@ public class RecipeManager {
 		 */
 		public static synchronized Hashtable<Integer, Prediction> getPredictions() {
 			return Witchery_Predictions.getPredictions();
+		}
+		/**
+		 * @param aID - The ID the desired prediction is registered to.
+		 * @return - {@link Prediction} bound to ID.
+		 */		 
+		public static synchronized Prediction getPrediction(int aID) {
+			return getPredictions().get(aID);
 		}
 	}
 
