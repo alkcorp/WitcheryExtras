@@ -49,7 +49,6 @@ public class PoppetShelfUtils {
 				}
 			}
 		}
-		aShelf.invalidate();
 	}
 	
 }

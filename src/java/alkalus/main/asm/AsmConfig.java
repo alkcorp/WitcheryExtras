@@ -42,7 +42,7 @@ public class AsmConfig {
 			prop = config.get("general", "allowPoppetShelfChunkLoading", true);
 			prop.comment = "Enables Chunk Loading by Poppet Shelves.";
 			prop.setLanguageKey("allowPoppetShelfChunkLoading").setRequiresMcRestart(true);
-			enablePatchNEI = prop.getBoolean(true);
+			allowPoppetShelfChunkLoading = prop.getBoolean(true);
 			propOrder.add(prop.getName());
 
 			config.setCategoryPropertyOrder("general", propOrder);

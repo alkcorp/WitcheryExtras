@@ -12,7 +12,6 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import net.minecraft.block.Block;
 
 @Mod(modid = WitcheryExtras.MODID, name = WitcheryExtras.NAME, version = WitcheryExtras.VERSION, dependencies = "required-after:Forge; after:witchery;")
 public class WitcheryExtras {
@@ -27,11 +26,6 @@ public class WitcheryExtras {
 	private static final Map<Integer, BasePluginWitchery> mInitEvents;
 	private static final Map<Integer, BasePluginWitchery> mPostInitEvents;
 	
-	//Custom Witches Oven
-	public static Block OVEN_IDLE;
-	public static Block OVEN_BURNING;
-	public static Block OVEN_FUMEFUNNEL;
-	public static Block OVEN_FUMEFUNNEL_FILTERED;
 
 	//Static Initialization block
 	static {
