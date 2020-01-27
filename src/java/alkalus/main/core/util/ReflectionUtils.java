@@ -386,6 +386,9 @@ public class ReflectionUtils {
 	public static boolean setField(final Object object, final Field field, final Object fieldValue) {
 		Class<?> clazz = object.getClass();
 		while (clazz != null) {
+			if (clazz == Object.class) {
+				return false;
+			}			
 			try {
 				final Field field2 = getField(clazz, field.getName());
 				if (field2 != null) {

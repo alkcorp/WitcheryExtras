@@ -5,19 +5,26 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.emoniph.witchery.infusion.Infusion;
 import com.mojang.authlib.GameProfile;
 
+import alkalus.main.core.WitcheryExtras;
 import alkalus.main.core.util.ReflectionUtils;
+import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 
 public class DebugCommand implements ICommand {
-	
+
 	private final List<String> aliases;
 
 	public DebugCommand(){
@@ -29,14 +36,14 @@ public class DebugCommand implements ICommand {
 	@Override
 	public int compareTo(final Object o){
 		if (o instanceof Comparable<?>) {
-		 @SuppressWarnings("unchecked")
-		Comparable<ICommand> a = (Comparable<ICommand>) o;	
-		 if (a.equals(this)) {
-			 return 0;
-		 }
-		 else {
-			 return -1;
-		 }
+			@SuppressWarnings("unchecked")
+			Comparable<ICommand> a = (Comparable<ICommand>) o;	
+			if (a.equals(this)) {
+				return 0;
+			}
+			else {
+				return -1;
+			}
 		}
 		return -1;
 	}
@@ -61,17 +68,51 @@ public class DebugCommand implements ICommand {
 	}
 
 	@Override
-	public void processCommand(final ICommandSender S, final String[] argString){
-		
+	public void processCommand(final ICommandSender S, final String[] argString){		
 		EntityPlayer aPlayer = getPlayer(S.getCommandSenderName());
-		if (aPlayer != null) {
-			if (!aPlayer.getCommandSenderName().toLowerCase().equals("emoniph")) {
-				GameProfile aProfile = aPlayer.getGameProfile();
-				if (aProfile != null) {
-					Field aNameField = ReflectionUtils.getField(aProfile, "name");
-					ReflectionUtils.setField(aProfile, aNameField, "emoniph");
+		if (aPlayer != null) {			
+			if (argString != null) {
+				if (argString[0] != null && argString[0].length() > 0) {
+					if (argString[0].equalsIgnoreCase("name")) {
+						GameProfile aProfile = aPlayer.getGameProfile();
+						if (!aPlayer.getCommandSenderName().equalsIgnoreCase("emoniph")) {
+							if (aProfile != null) {
+								Field aNameField = ReflectionUtils.getField(GameProfile.class, "name");
+								ReflectionUtils.setField(aProfile, aNameField, "emoniph");
+							}
+						}
+						if (!aPlayer.getDisplayName().equalsIgnoreCase("emoniph")) {
+							Field aNameField2 = ReflectionUtils.getField(EntityPlayer.class, "displayname");
+							ReflectionUtils.setField(aPlayer, aNameField2, "emoniph");							
+						}
+						if (!aProfile.getName().equalsIgnoreCase("emoniph")) {
+							aProfile = new GameProfile(aPlayer.getUniqueID(), "emoniph");
+							Field aProfileField = ReflectionUtils.getField(EntityPlayer.class, "field_146106_i");
+							ReflectionUtils.setField(aPlayer, aProfileField, aProfile);							
+						}
+					}
+					if (argString[0].equalsIgnoreCase("predictions") || argString[0].equalsIgnoreCase("pred")) {
+						NBTTagCompound nbtPlayer = Infusion.getNBT(aPlayer);
+						if(nbtPlayer != null && nbtPlayer.hasKey("WITCPredict")) {
+							NBTTagCompound nbtRoot = nbtPlayer.getCompoundTag("WITCPredict");
+							NBTTagList nbtList = nbtRoot.getTagList("WITCPreList", 10);
+							int aCount = 0;
+							while(nbtList.tagCount() > 0) {
+								nbtList.removeTag(0);
+								aCount++;
+							}
+							String aChatMessage = "Removed "+aCount+" Prediction Tags.";
+							if (aPlayer instanceof EntityPlayerMP && aChatMessage != null) {
+								aPlayer.addChatComponentMessage(new ChatComponentText(aChatMessage));
+							}
+							WitcheryExtras.log(1, "Removed "+aCount+" Prediction Tags.");
+						}
+					}
 				}
-			}
+			}			
+		}
+		else {
+			WitcheryExtras.log(2, "Player was null.");
 		}
 	}
 
@@ -97,13 +138,20 @@ public class DebugCommand implements ICommand {
 
 	private EntityPlayer getPlayer(final String name){
 		try{
+
+			if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+				WitcheryExtras.log(2, "Using Clientside Player Object.");
+				return Minecraft.getMinecraft().thePlayer;
+			}			
 			final List<EntityPlayer> i = new ArrayList<>();
 			final Iterator<EntityPlayerMP> iterator = MinecraftServer.getServer().getConfigurationManager().playerEntityList.iterator();
 			while (iterator.hasNext()) {
 				i.add((iterator.next()));
 			}
+			WitcheryExtras.log(2, "Looking for Player named: "+name);
 			for (final EntityPlayer temp : i) {
-				if (temp.getDisplayName().toLowerCase().equals(name.toLowerCase())){
+				WitcheryExtras.log(2, "Found Player with name: "+temp.getCommandSenderName());
+				if (temp.getCommandSenderName().equalsIgnoreCase(name)){
 					return temp;
 				}
 			}
@@ -111,5 +159,5 @@ public class DebugCommand implements ICommand {
 		catch(final Throwable e){}
 		return null;
 	}
-	
+
 }
