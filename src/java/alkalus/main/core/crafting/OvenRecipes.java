@@ -45,7 +45,7 @@ public class OvenRecipes {
 		addRecipe("meatRaw", 1, Witchery.Items.GENERIC.itemFoulFume.createStack(1));
 		
 		//Test
-		addRecipe(Utils.simpleMetaStack(Blocks.diamond_ore, 0, 1), 1, Witchery.Items.GENERIC.itemCreeperHeart.createStack(1), Witchery.Items.GENERIC.itemRedstoneSoup.createStack(1)); //Dark Oak - 5
+		//addRecipe(Utils.simpleMetaStack(Blocks.diamond_ore, 0, 1), 1, Witchery.Items.GENERIC.itemCreeperHeart.createStack(1), Witchery.Items.GENERIC.itemRedstoneSoup.createStack(1)); //Dark Oak - 5
 	}	
 
 	private final static ItemStack createStack(final int stackSize) {
@@ -95,16 +95,32 @@ public class OvenRecipes {
 		return addRecipe(null, input1, jars, null, 0, jarOutput, jars);
 	}
 	
-	/** @param input1 - The Input Item.
+
+	/**
+	 * 
+	 * @param input1 - The Input Item.
 	 * @param jars - The required amount of Jars.
-	 * @param amt1 - The amount of output1 you receive.
-	 * @param output2 - The type of Jar output.
+	 * @param output0 - A custom ItemStack output.
+	 * @param amt0 - The amount of custom outputs.
+	 * @param output1 - The type of Jar output.
+	 * @param amt1 - The amount of Jars output
 	 * @return - A new {@link OverRecipe} object.
 	 */
 	public static OvenRecipe addRecipe(final ItemStack input1, final int jars, final ItemStack output0, int amt0, final ItemStack output1, final int amt1) {
 		return addRecipe(input1, "", jars, output0, amt0, output1, amt1);
 	}
 	
+	/**
+	 * 
+	 * @param input1 - The Input Item.
+	 * @param inputString1 - A Valid Oredict String.
+	 * @param jars - The required amount of Jars.
+	 * @param customOutput - A custom ItemStack output.
+	 * @param amt1 - The amount of custom outputs.
+	 * @param outputJarStack - The type of Jar output.
+	 * @param amt2 - The amount of Jars output
+	 * @return - A new {@link OverRecipe} object.
+	 */
 	public static OvenRecipe addRecipe(
 			final ItemStack input1, final String inputString1, final int jars,
 			final ItemStack customOutput, final int amt1, final ItemStack outputJarStack, final int amt2) {
@@ -234,8 +250,8 @@ public class OvenRecipes {
 	 * @param input1 - An ItemStack
 	 * @return - The first Matching {@link OverRecipe}.
 	 */
-	public OvenRecipe findRecipeUsing(final ItemStack ingredient) {
-		for (final OvenRecipe recipe : this.mRecipeMap) {
+	public static OvenRecipe findRecipeUsing(final ItemStack ingredient) {
+		for (final OvenRecipe recipe : mRecipeMap) {
 			if (recipe.uses(ingredient)) {
 				return recipe;
 			}

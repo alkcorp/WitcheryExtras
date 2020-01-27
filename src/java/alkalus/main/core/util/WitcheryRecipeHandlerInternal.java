@@ -23,6 +23,8 @@ import com.emoniph.witchery.ritual.RitualTraits;
 import com.emoniph.witchery.ritual.Sacrifice;
 
 import alkalus.main.core.WitcheryExtras;
+import alkalus.main.core.crafting.OvenRecipes;
+import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
 import alkalus.main.core.types.Witchery_Cauldron;
 import alkalus.main.core.types.Witchery_CreaturePower;
 import alkalus.main.core.types.Witchery_Distillery;
@@ -48,7 +50,36 @@ public class WitcheryRecipeHandlerInternal {
 
 
 
+	/*
+	 * Oven Recipes
+	 */
+	public static synchronized boolean addOvenRecipe(final ItemStack input1, final String inputString1, final int jars,	final ItemStack customOutput, final int amt1, final ItemStack outputJarStack, final int amt2) {
+		if (OvenRecipes.addRecipe(input1, inputString1, jars, customOutput, amt1, outputJarStack, amt2) != null) {
+			return true;
+		}
+		return false;
+	}
 
+	public static synchronized boolean removeOvenRecipe(OvenRecipe mRecipe) {		
+		if (mRecipe == null) {
+			WitcheryExtras.log(2, "Null Oven Recipe parsed into removeOvenRecipe(). Please check all OvenRecipes are valid before calling this function.");
+			return false;
+		}
+		boolean aDidRemove = false;		
+		ArrayList<OvenRecipe> aRecipes = OvenRecipes.getRecipeMap();		
+		if (aRecipes.contains(mRecipe)) {
+			if (aRecipes.remove(mRecipe)) {
+				aDidRemove = true;
+			}
+		}
+		if (aDidRemove) {
+			WitcheryExtras.log(0, "Removed Oven recipe: "+mRecipe.getDescription());			
+		}
+		else {
+			WitcheryExtras.log(0, "Failed to remove Oven recipe: "+mRecipe.getDescription());			
+		}
+		return aDidRemove;
+	}
 
 
 
@@ -315,7 +346,7 @@ public class WitcheryRecipeHandlerInternal {
 		return true;
 	}
 
-	public boolean removeSpinningWheelRecipe(ItemStack result, ItemStack fibre, ItemStack... modifiers) {
+	public static boolean removeSpinningWheelRecipe(ItemStack result, ItemStack fibre, ItemStack... modifiers) {
 		SpinningRecipe aRecipeToRemove = null;
 		for (SpinningRecipe aRecipe : SpinningRecipes.instance().recipes) {
 			if (Utils.areStacksEqual(fibre, aRecipe.fibre)) {
@@ -331,6 +362,10 @@ public class WitcheryRecipeHandlerInternal {
 			return SpinningRecipes.instance().recipes.remove(aRecipeToRemove);
 		}
 		return false;		
+	}
+
+	public static boolean removeSpinningRecipe(SpinningRecipe mRecipe) {
+		return removeSpinningWheelRecipe(mRecipe.result, mRecipe.fibre, mRecipe.modifiers);
 	}
 
 }

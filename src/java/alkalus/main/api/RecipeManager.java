@@ -1,24 +1,38 @@
 package alkalus.main.api;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Hashtable;
 
+import com.emoniph.witchery.WitcheryRecipes;
 import com.emoniph.witchery.crafting.DistilleryRecipes.DistilleryRecipe;
 import com.emoniph.witchery.crafting.KettleRecipes.KettleRecipe;
+import com.emoniph.witchery.crafting.SpinningRecipes.SpinningRecipe;
 import com.emoniph.witchery.infusion.Infusion;
 import com.emoniph.witchery.infusion.infusions.creature.CreaturePower;
 import com.emoniph.witchery.predictions.Prediction;
-import com.emoniph.witchery.ritual.*;
-
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import com.emoniph.witchery.ritual.Circle;
+import com.emoniph.witchery.ritual.Rite;
+import com.emoniph.witchery.ritual.RitualTraits;
+import com.emoniph.witchery.ritual.Sacrifice;
 
 import alkalus.main.api.plugin.base.BasePluginWitchery;
 import alkalus.main.core.WitcheryExtras;
-import alkalus.main.core.types.*;
+import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
+import alkalus.main.core.types.Witchery_CreaturePower;
+import alkalus.main.core.types.Witchery_Distillery;
+import alkalus.main.core.types.Witchery_Infusion;
+import alkalus.main.core.types.Witchery_Kettle;
+import alkalus.main.core.types.Witchery_Oven;
+import alkalus.main.core.types.Witchery_Predictions;
+import alkalus.main.core.types.Witchery_Rite;
+import alkalus.main.core.types.Witchery_SpinningWheel;
 import alkalus.main.core.util.AutoMap;
 import alkalus.main.core.util.WitcheryRecipeHandlerInternal;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import scala.collection.mutable.HashTable;
 
 /**
  * 
@@ -84,6 +98,118 @@ public class RecipeManager {
 		
 	}
 
+	public static class WitchesOven {
+		/**
+		 * @param input1 - The Input Item.
+		 * @param inputString1 - A Valid Oredict String.
+		 * @param jars - The required amount of Jars.
+		 * @param customOutput - A custom ItemStack output.
+		 * @param amt1 - The amount of custom outputs.
+		 * @param outputJarStack - The type of Jar output.
+		 * @param amt2 - The amount of Jars output
+		 * @return - A new {@link OverRecipe} object.
+		 */
+		public static synchronized boolean addRecipe(final ItemStack input1, final String inputString1, final int jars,	final ItemStack customOutput, final int amt1, final ItemStack outputJarStack, final int amt2) {
+			return WitcheryRecipeHandlerInternal.addOvenRecipe(input1, inputString1, jars, customOutput, amt1, outputJarStack, amt2);
+		}
+		
+		/** This Function will remove the  {@link OvenRecipe} input.
+		 * @param mRecipe - An {@link OvenRecipe} for a recipe you wish to remove.
+		 * @return - {@link boolean} representing whether or not the recipe was removed.
+		 */
+		public static synchronized boolean removeRecipe(OvenRecipe mRecipe) {
+			return WitcheryRecipeHandlerInternal.removeOvenRecipe(mRecipe);
+		}
+		/** Finds a {@link OvenRecipe} matching a broad range of inputs.
+		 * @param input1 - An {@link ItemStack}, input 1.
+		 * @param jars - An {@link ItemStack}, amount of Jars used.
+		 * @return - An {@link OvenRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized OvenRecipe getOvenResult(ItemStack input1, int jars){
+			return Witchery_Oven.getOvenResult(input1, jars);
+		}
+		/** This Function will find the first {@link OvenRecipe} it finds that matches the specified output.
+		 * @param outputs - An {@link ItemStack} of the Output, for a recipe you wish to find.
+		 * @return - An {@link OvenRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized OvenRecipe findRecipeForOutput(ItemStack result){
+			return Witchery_Oven.findRecipeFor(result);
+		}
+		/** This Function will find the first {@link OvenRecipe} it finds that matches the specified ingredient.
+		 * @param outputs - An {@link ItemStack} of the ingredient, for a recipe you wish to find.
+		 * @return - A {@link OvenRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized OvenRecipe findRecipeUsingIngredient(ItemStack ingredient){
+			return Witchery_Oven.findRecipeUsing(ingredient);
+		}
+	}
+
+	public static class SpinningWheel {
+		
+		/**
+		 * 
+		 * @param aInputFibre - The Item to be spun.
+		 * @param aOutput - The item produced.
+		 * @param aModifiers - Modifiers to change the recipe.
+		 * @return - {@link boolean} representing whether or not the recipe was added.
+		 */
+		public static boolean addRecipe(ItemStack aInputFibre, ItemStack aOutput, ItemStack[] aModifiers) {
+			return WitcheryRecipeHandlerInternal.addSpinningWheelRecipe(aOutput, aInputFibre, aModifiers);
+		}
+		
+		/** This Function will remove the closest matching recipe.
+		 * @param result - An {@link ItemStack}, The result of the spinning recipe.
+		 * @param fibre - An {@link ItemStack}, The 'fibre' used to produce the result..
+		 * @param modifiers - An {@link ItemStack}, The items used to modify this recipe (Can be null).
+		 * @return - {@link boolean} representing whether or not the recipe was removed.
+		 */
+		public static boolean removeRecipe(ItemStack result, ItemStack fibre, ItemStack... modifiers) {
+			return WitcheryRecipeHandlerInternal.removeSpinningWheelRecipe(result, fibre, modifiers);			
+		}
+		
+		/** This Function will remove the {@link SpinningRecipe} input.
+		 * @param outputs - An {@link SpinningRecipe} for a recipe you wish to remove.
+		 * @return - {@link boolean} representing whether or not the recipe was removed.
+		 */
+		public static synchronized boolean removeRecipe(SpinningRecipe mRecipe) {
+			return WitcheryRecipeHandlerInternal.removeSpinningRecipe(mRecipe);
+		}
+
+		/** This Function will find the first {@link SpinningRecipe} it finds that matches the specified output.
+		 * @param fibre - The Input Used
+		 * @param modifiers - Modifiers used (Can be null)
+		 * @return - An {@link SpinningRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized SpinningRecipe getRecipe(ItemStack fibre, ItemStack[] modifiers) {
+			return Witchery_SpinningWheel.getRecipe(fibre, modifiers);
+		}
+
+		/** This Function will find the first {@link SpinningRecipe} it finds that matches the specified output.
+		 * @param outputs - An {@link ItemStack} of the Output, for a recipe you wish to find.
+		 * @return - An {@link SpinningRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized SpinningRecipe findRecipeFor(ItemStack result) {
+			return Witchery_SpinningWheel.findRecipeFor(result);
+		}
+
+		/** This Function will find the first {@link SpinningRecipe} it finds that matches the specified ingredient.
+		 * @param outputs - An {@link ItemStack} of the ingredient, for a recipe you wish to find. May be the fibre or a modifier.
+		 * @return - A {@link SpinningRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized SpinningRecipe findRecipeUsing(ItemStack ingredient) {
+			return Witchery_SpinningWheel.findRecipeUsing(ingredient);
+		}
+
+		/** This Function will find the first {@link SpinningRecipe} it finds that matches the specified input.
+		 * @param outputs - An {@link ItemStack} of the fibre used, for a recipe you wish to find.
+		 * @return - A {@link SpinningRecipe} representing the closest matching recipe.
+		 */
+		public static synchronized SpinningRecipe findRecipeUsingFibre(ItemStack ingredient) {
+			return Witchery_SpinningWheel.findRecipeUsingFibre(ingredient);
+		}
+		
+	}
+
 	public static class Distillery {
 		/** @param input1 - First Input Item
 		 * @param input2 - Secondary Input Item
@@ -97,7 +223,7 @@ public class RecipeManager {
 		public static synchronized boolean addRecipe(ItemStack input1, ItemStack input2, int jars, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4) {
 			return WitcheryRecipeHandlerInternal.addDistilleryRecipe(input1, input2, jars, output1, output2, output3, output4);
 		}
-		/** This Function will remove the  {@link KettleRecipe} inputt.
+		/** This Function will remove the  {@link KettleRecipe} input.
 		 * @param outputs - An {@link DistilleryRecipe} for a recipe you wish to remove.
 		 * @return - {@link boolean} representing whether or not the recipe was removed.
 		 */
@@ -199,7 +325,7 @@ public class RecipeManager {
 
 	public static class RitesAndRituals {
 		/** @param ritualID - Byte Value between 0-127.
-		 * @param bookIndex - Unsure, possbly look at other recipes in {@link WitcheryRecipes} for better examples.
+		 * @param bookIndex - Unsure, possibly look at other recipes in {@link WitcheryRecipes} for better examples.
 		 * Otherwise, just use ID+100 if you are unsure and want recipes to work as expected.
 		 * @param rite - The {@link Rite} that you wish to add to the registry.
 		 * @param initialSacrifice - The {@link Sacrifice} that is required.

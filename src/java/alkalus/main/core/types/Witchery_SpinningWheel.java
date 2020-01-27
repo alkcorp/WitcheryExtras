@@ -7,19 +7,19 @@ import net.minecraft.item.ItemStack;
 
 public class Witchery_SpinningWheel {
 
-	public SpinningRecipe getRecipe(ItemStack fibre, ItemStack[] modifiers) {
+	public static synchronized SpinningRecipe getRecipe(ItemStack fibre, ItemStack[] modifiers) {
 		return SpinningRecipes.instance().getRecipe(fibre, modifiers);
 	}
 
-	public SpinningRecipe findRecipeFor(ItemStack result) {
+	public static synchronized SpinningRecipe findRecipeFor(ItemStack result) {
 		return SpinningRecipes.instance().findRecipeFor(result);
 	}
 
-	public SpinningRecipe findRecipeUsing(ItemStack ingredient) {
+	public static synchronized SpinningRecipe findRecipeUsing(ItemStack ingredient) {
 		return SpinningRecipes.instance().findRecipeUsing(ingredient);
 	}
 
-	public SpinningRecipe findRecipeUsingFibre(ItemStack ingredient) {
+	public static synchronized SpinningRecipe findRecipeUsingFibre(ItemStack ingredient) {
 		return SpinningRecipes.instance().findRecipeUsingFibre(ingredient);
 	}
 

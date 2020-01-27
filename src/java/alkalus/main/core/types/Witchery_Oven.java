@@ -1,22 +1,21 @@
 package alkalus.main.core.types;
 
-import com.emoniph.witchery.crafting.DistilleryRecipes;
-import com.emoniph.witchery.crafting.DistilleryRecipes.DistilleryRecipe;
-
+import alkalus.main.core.crafting.OvenRecipes;
+import alkalus.main.core.crafting.OvenRecipes.OvenRecipe;
 import net.minecraft.item.ItemStack;
 
 public class Witchery_Oven {
 
-	public static synchronized DistilleryRecipe getDistillingResult(ItemStack input1, ItemStack intput2, ItemStack jars){
-		return DistilleryRecipes.instance().getDistillingResult(input1, intput2, jars);
+	public static synchronized OvenRecipe getOvenResult(final ItemStack input1, final int jars){
+		return OvenRecipes.getOvenResult(input1, jars);
 	}
 
-	public static synchronized DistilleryRecipe findRecipeFor(ItemStack result){
-		return DistilleryRecipes.instance().findRecipeFor(result);
+	public static synchronized OvenRecipe findRecipeFor(ItemStack result){
+		return OvenRecipes.findRecipeFor(result);
 	}
 
-	public static synchronized DistilleryRecipe findRecipeUsing(ItemStack ingredient){
-		return DistilleryRecipes.instance().findRecipeUsing(ingredient);
+	public static synchronized OvenRecipe findRecipeUsing(ItemStack ingredient){
+		return OvenRecipes.findRecipeUsing(ingredient);
 	}
 
 }
