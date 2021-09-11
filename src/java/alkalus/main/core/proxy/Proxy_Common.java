@@ -1,6 +1,7 @@
 package alkalus.main.core.proxy;
 
 import alkalus.main.core.recipe.CustomRecipeLoader;
+import alkalus.main.core.util.ModCompat;
 import alkalus.main.core.util.TooltipHandler;
 import alkalus.main.core.util.Utils;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -15,6 +16,7 @@ public class Proxy_Common {
 
 	public void init(final FMLInitializationEvent e) {	
 		new CustomRecipeLoader();
+		ModCompat.checkLoadedMods();
 	}	
 
 	public synchronized void postInit(final FMLPostInitializationEvent e) {	

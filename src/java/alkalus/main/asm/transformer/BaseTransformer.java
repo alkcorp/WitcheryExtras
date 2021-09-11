@@ -86,15 +86,16 @@ public abstract class BaseTransformer {
 			boolean found = false;
 			String[] aNames = getMethodNamesToStrip();
 			String[] aDesc = getMethodDescriptorsToStrip();
-			boolean checkDesc = aDesc != null && aDesc.length > 0;
-			
+			boolean checkDesc = aDesc != null && aDesc.length > 0;			
 			for (int i=0;i<getMethodNamesToStrip().length;i++) {
 				if (checkDesc) {
-					if (desc.equals(aDesc[i])) {
-						if (name.equals(aNames[i])) {
-							found = true;
-							break;
-						}
+					for (int j=0; j < aDesc.length; j++) {
+							if (name.equals(aNames[i])) {
+								if (desc.equals(aDesc[j])) {
+								found = true;
+								break;
+							}
+						}						
 					}
 				}
 				else {

@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_NEIWitcheryConfig;
+import alkalus.main.asm.transformer.ClassTransformer_Witchery_PacketPipeline;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityPoppetShelf;
+import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesCauldron;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesOven;
-import alkalus.main.core.util.Logger;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -70,6 +71,16 @@ public class WE_CORE_Handler implements IClassTransformer {
 		if (transformedName.equals("com.emoniph.witchery.blocks.BlockPoppetShelf$TileEntityPoppetShelf")) {
 			return new ClassTransformer_Witchery_TileEntityPoppetShelf(transformedName, basicClass, obfuscated).getWriter().toByteArray();
 		}	
+		
+		// Patch Witches Cauldron to allow other heating blocks
+		if (transformedName.equals("com.emoniph.witchery.brewing.TileEntityCauldron")) {
+			return new ClassTransformer_Witchery_TileEntityWitchesCauldron(transformedName, basicClass, obfuscated).getWriter().toByteArray();
+		}
+		
+		// Patch potential bad packet handling
+		if (transformedName.equals("com.emoniph.witchery.network.PacketPipeline")) {
+			return new ClassTransformer_Witchery_PacketPipeline(transformedName, basicClass, obfuscated).getWriter().toByteArray();
+		}
 		
 		return basicClass;
 	}
