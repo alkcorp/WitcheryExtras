@@ -8,6 +8,10 @@ public class ThaumcraftCompat {
 	private static Class BlockClass;
 	private static Class TileNitor;
 	
+	static {
+		init();
+	}
+	
 	
 	public static void init() {
 		BlockClass = ReflectionUtils.getClass("thaumcraft.common.config.ConfigBlocks");
@@ -15,7 +19,7 @@ public class ThaumcraftCompat {
 	}
 	
 	public static boolean isTileNitor(TileEntity tile) {
-		return TileNitor.isInstance(tile);
+		return TileNitor != null ? TileNitor.isInstance(tile) : false;
 	}
 	
 	
