@@ -21,16 +21,23 @@ public class TooltipHandler {
 	private static ItemStack mCauldronStack;
 	private static final Class mCauldronClass;
 
+
+	private static Item mKettleItem;
+	private static Block mKettleBlock;
+	private static ItemStack mKettleStack;
+	private static final Class mKettleClass;
+
 	static {
 		mPoppetShelfClass = ReflectionUtils.getClass("com.emoniph.witchery.blocks.BlockPoppetShelf");
 		mCauldronClass = ReflectionUtils.getClass("com.emoniph.witchery.brewing.BlockCauldron");
+		mKettleClass = ReflectionUtils.getClass("com.emoniph.witchery.blocks.BlockKettle");
 	}
 
 	@SubscribeEvent
 	public void onItemTooltip(ItemTooltipEvent event){
 
 
-		if (mPoppetShelfStack == null || mCauldronStack == null) {
+		if (mPoppetShelfStack == null || mCauldronStack == null || mKettleStack == null) {
 			init(event);
 		}
 
@@ -51,6 +58,16 @@ public class TooltipHandler {
 				event.toolTip.add(EnumChatFormatting.RED+"Lava (2x rate)");	
 				if (ModCompat.Thaumcraft) {
 					event.toolTip.add(EnumChatFormatting.DARK_RED+"Nitor (3x rate)");							
+				}								
+			}
+		}
+		if (mKettleStack != null) {
+			if (Utils.areStacksEqual(mKettleStack, event.itemStack, true)) {
+				event.toolTip.add(EnumChatFormatting.GREEN+"Can be heated with:");	
+				event.toolTip.add(EnumChatFormatting.RED+"Fire");	
+				event.toolTip.add(EnumChatFormatting.RED+"Lava");	
+				if (ModCompat.Thaumcraft) {
+					event.toolTip.add(EnumChatFormatting.DARK_RED+"Nitor");							
 				}								
 			}
 		}
@@ -100,6 +117,29 @@ public class TooltipHandler {
 						if (i != null) {
 							mCauldronItem = i;
 							mCauldronStack = new ItemStack(mCauldronItem);
+						}
+					}
+				}					
+			}
+		}		
+
+		// Init Kettle
+		if (mKettleBlock == null || mKettleItem == null || mKettleStack == null) {
+			if (event.itemStack != null && event.itemStack.getItem() != null) {					
+				// Set Block
+				if (mKettleBlock == null) {
+					Block b = Block.getBlockFromItem(event.itemStack.getItem());
+					if (mKettleClass.isInstance(b)) {
+						mKettleBlock = b;
+					}
+				}
+				if (mKettleItem == null || mKettleStack == null) {
+					// Set Item/ItemStack from Block since it matches.
+					if (mKettleBlock != null) {
+						Item i = Item.getItemFromBlock(mKettleBlock);
+						if (i != null) {
+							mKettleItem = i;
+							mKettleStack = new ItemStack(mKettleItem);
 						}
 					}
 				}					

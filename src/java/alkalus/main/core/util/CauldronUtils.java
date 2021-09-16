@@ -2,6 +2,7 @@ package alkalus.main.core.util;
 
 import alkalus.main.core.util.xmod.ThaumcraftCompat;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -30,6 +31,10 @@ public class CauldronUtils {
 			if (aBlock == Blocks.lava || aBlock == Blocks.flowing_lava) {
 				//WitcheryExtras.log(0, "Found Lava");
 				return 2;
+			}
+			
+			if (aBlock.getMaterial() == Material.fire) {
+				return 1;
 			}
 		}
 		else {

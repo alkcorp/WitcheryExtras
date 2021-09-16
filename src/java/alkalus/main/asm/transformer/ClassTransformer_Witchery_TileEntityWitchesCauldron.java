@@ -1438,16 +1438,6 @@ public class ClassTransformer_Witchery_TileEntityWitchesCauldron extends BaseTra
 		return true;
 	}
 
-
-
-
-
-	
-	//public void sendTo(final IMessage message, final EntityPlayerMP/mw player)
-	//public void sendTo(final Packet/ft packet, final EntityPlayer/yz player)
-	//public void sendToDimension(final Packet packet, final World/ahb world)
-	//public void sendToAllAround(final Packet packet, final World world, final NetworkRegistry.TargetPoint point)
-
 	@Override
 	public String[] getMethodNamesToStrip() {
 		return new String[] {

@@ -7,6 +7,7 @@ import alkalus.main.asm.transformer.ClassTransformer_Witchery_NEIWitcheryConfig;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_PacketPipeline;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityPoppetShelf;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesCauldron;
+import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesKettle;
 import alkalus.main.asm.transformer.ClassTransformer_Witchery_TileEntityWitchesOven;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.ReflectionHelper;
@@ -75,6 +76,11 @@ public class WE_CORE_Handler implements IClassTransformer {
 		// Patch Witches Cauldron to allow other heating blocks
 		if (transformedName.equals("com.emoniph.witchery.brewing.TileEntityCauldron")) {
 			return new ClassTransformer_Witchery_TileEntityWitchesCauldron(transformedName, basicClass, obfuscated).getWriter().toByteArray();
+		}
+		
+		// Patch Witches Kettle to allow other heating blocks
+		if (transformedName.equals("com.emoniph.witchery.blocks.BlockKettle.TileEntityKettle")) {
+			return new ClassTransformer_Witchery_TileEntityWitchesKettle(transformedName, basicClass, obfuscated).getWriter().toByteArray();
 		}
 		
 		// Patch potential bad packet handling
